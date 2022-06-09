@@ -261,7 +261,7 @@ func initVar(oracleSec *ini.Section) (err error) {
 }
 
 func showMainMenu() {
-	fmt.Printf("\n\033[1;32m欢迎使用甲骨文实例管理工具\033[0m \n(当前账号: %s)\n\n", oracleSection.Name())
+	fmt.Printf("\n\033[1;32m欢迎使用甲骨文实例管理工具\033[0m \n版本：%s\n\n(当前账号: %s)\n\n", Version, oracleSection.Name())
 	fmt.Printf("\033[1;36m%s\033[0m %s\n", "1.", "查看实例")
 	fmt.Printf("\033[1;36m%s\033[0m %s\n", "2.", "创建实例")
 	fmt.Printf("\033[1;36m%s\033[0m %s\n", "3.", "管理引导卷")
