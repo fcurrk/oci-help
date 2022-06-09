@@ -164,8 +164,7 @@ func listOracleAccount() {
 	if len(oracleSections) == 1 {
 		oracleSection = oracleSections[0]
 	} else {
-		fmt.Printf("\n\033[1;32m%s\033[0m\n", "欢迎使用甲骨文实例管理工具")
-		fmt.Printf("\n%s\n\n", Version)
+		fmt.Printf("\n\033[1;32m%s\033[0m\n版本：%s\n\n", "欢迎使用甲骨文实例管理工具", Version)
 		w := new(tabwriter.Writer)
 		w.Init(os.Stdout, 4, 8, 1, '\t', 0)
 		fmt.Fprintf(w, "%s\t%s\t\n", "序号", "账号")
