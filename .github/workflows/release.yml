@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        # Include amd64 on Linux and drawin.
+        # Include amd64 on Linux and windows.
         goos: [linux, windows]
         goarch: [amd64, 386]
         exclude:
@@ -64,12 +64,6 @@ jobs:
           do
             openssl dgst -$METHOD $FILE | sed 's/([^)]*)//g' >>$DGST
           done
-
-      - name: Upload ZIP file to Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: oci-help-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
-          path: oci-help-${{ steps.get_filename.outputs.ASSET_NAME }}.zip
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
