@@ -29,6 +29,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/fatih/color"
 	"io"
 	"io/ioutil"
 	"math"
@@ -47,7 +48,6 @@ import (
 	"github.com/oracle/oci-go-sdk/v54/example/helpers"
 	"github.com/oracle/oci-go-sdk/v54/identity"
 	"gopkg.in/ini.v1"
-	"github.com/fatih/color"
 )
 
 const (
