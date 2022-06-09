@@ -819,7 +819,7 @@ func listLaunchInstanceTemplates() {
 	instanceSections = append(instanceSections, instanceBaseSection.ChildSections()...)
 	instanceSections = append(instanceSections, oracleSection.ChildSections()...)
 	if len(instanceSections) == 0 {
-	        color.Set(color.Fgred)
+	        color.Set(color.FgRed)
 		fmt.Printf("未找到实例模版, 回车返回上一级菜单.")
 		color.Unset()
 		fmt.Scanln()
