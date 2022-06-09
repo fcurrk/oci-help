@@ -271,10 +271,12 @@ func showMainMenu() {
         color.Set(color.FgGreen, color.Bold)
 	fmt.Printf("\n欢迎使用甲骨文实例管理工具 \nVersion：V%s\n\n(当前账号: %s)\n\n", Version, oracleSection.Name())
 	color.Unset()
-	fmt.Printf("%s %s\n", color.CyanString("1."), "查看实例")
-	fmt.Printf("%s %s\n", color.CyanString("2."), "创建实例")
-	fmt.Printf("%s %s\n", color.CyanString("3."), "管理引导卷")
+	color.Set(color.FgCyan, color.Bold)
+	fmt.Printf("%s %s\n", "1.", "查看实例")
+	fmt.Printf("%s %s\n", "2.", "创建实例")
+	fmt.Printf("%s %s\n", "3.", "管理引导卷")
 	fmt.Print("\n请输入序号进入相关操作: ")
+	color.Unset()
 	var input string
 	var num int
 	fmt.Scanln(&input)
@@ -719,7 +721,7 @@ func bootvolumeDetails(bootVolumeId *string) {
 				_, err := updateBootVolume(bootVolume.Id, nil, common.Int64(10))
 				if err != nil {
                                         color.Set(color.FgRed)
-					fmt.Printf("修改引导卷性能失败.\033[0m %s\n", err.Error())
+					fmt.Printf("修改引导卷性能失败. %s\n", err.Error())
 					color.Unset()
 				} else {
 				        color.Set(color.FgGreen)
@@ -1152,7 +1154,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 
 		runTimes++
 		color.Set(color.FgCyan)
-		printf("[%s] 正在尝试创建第 %d 个实例, AD: %s\033[0m\n", oracleSectionName, pos+1, *adName)
+		printf("[%s] 正在尝试创建第 %d 个实例, AD: %s\n", oracleSectionName, pos+1, *adName)
 		printf("[%s] 当前尝试次数: %d \n", oracleSectionName, runTimes)
 		color.Unset()
 		request.AvailabilityDomain = adName
