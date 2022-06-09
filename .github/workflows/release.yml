@@ -8,14 +8,14 @@ jobs:
     strategy:
       matrix:
         # Include amd64 on Linux and drawin.
-        goos: [linux, darwin]
+        goos: [linux, windows]
         goarch: [amd64, 386]
         exclude:
-          # Exclude i386 on darwin.
+          # Exclude i386 on windows.
           - goarch: 386
-            goos: darwin
+            goos: windows
         include:
-          - goos: darwin
+          - goos: windows
             goarch: arm64
           - goos: linux
             goarch: arm64
