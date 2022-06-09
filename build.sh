@@ -3,6 +3,7 @@
 
 BUILD() {
   cd oci-help
+  go get github.com/fatih/color
   appName="oci-help"
 
   rm -rf .git/
