@@ -153,8 +153,9 @@ func main() {
 		}
 	}
 	if len(oracleSections) == 0 {
-	        color.Set(color.FgGreen, color.Bold)
-		fmt.Printf("未找到正确的配置信息, 请参考链接文档配置相关信息。链接: https://github.com/lemoex/oci-help\033[0m\n")
+	        color.Set(color.FgGreen)
+		fmt.Printf("未找到正确的配置信息, 请参考链接文档配置相关信息。链接: https://github.com/lemoex/oci-help\n")
+		color.Unset()
 		return
 	}
 	instanceBaseSection = cfg.Section("INSTANCE")
@@ -166,7 +167,9 @@ func listOracleAccount() {
 	if len(oracleSections) == 1 {
 		oracleSection = oracleSections[0]
 	} else {
-		fmt.Printf("\n\033[1;32m%s\033[0m\nVersion：V%s\n\n", "欢迎使用甲骨文实例管理工具", Version)
+	        color.Set(color.FgGreen, color.Bold)
+		fmt.Printf("\n%s\n Version：V%s\n\n", "欢迎使用甲骨文实例管理工具", Version)
+		color.Unset()
 		w := new(tabwriter.Writer)
 		w.Init(os.Stdout, 4, 8, 1, '\t', 0)
 		fmt.Fprintf(w, "%s\t%s\t\n", "序号", "账号")
@@ -198,7 +201,9 @@ func listOracleAccount() {
 			} else {
 				index = 0
 				input = ""
-				fmt.Printf("\033[1;31m错误! 请输入正确的序号\033[0m\n")
+				color.Set(color.Fgred)
+				fmt.Printf("错误! 请输入正确的序号\n")
+				color.Unset()
 			}
 		}
 		oracleSection = oracleSections[index-1]
@@ -265,10 +270,10 @@ func initVar(oracleSec *ini.Section) (err error) {
 func showMainMenu() {
         color.Set(color.FgGreen, color.Bold)
 	fmt.Printf("\n欢迎使用甲骨文实例管理工具 \nVersion：V%s\n\n(当前账号: %s)\n\n", Version, oracleSection.Name())
-	fmt.Printf("%s %s\n", "1.", "查看实例")
-	fmt.Printf("%s %s\n", "2.", "创建实例")
 	color.Unset()
-	fmt.Printf("%s %s\n", "3.", "管理引导卷")
+	fmt.Printf("%s %s\n", color.CyanString("1."), "查看实例")
+	fmt.Printf("%s %s\n", color.CyanString("2."), "创建实例")
+	fmt.Printf("%s %s\n", color.CyanString("3."), "管理引导卷")
 	fmt.Print("\n请输入序号进入相关操作: ")
 	var input string
 	var num int
@@ -307,12 +312,12 @@ func listInstances() {
 		return
 	}
 	if len(instances) == 0 {
-		fmt.Printf("\033[1;32m实例为空, 回车返回上一级菜单.\033[0m")
+		fmt.Printf("实例为空, 回车返回上一级菜单.")
 		fmt.Scanln()
 		showMainMenu()
 		return
 	}
-	fmt.Printf("\n\033[1;32m实例信息\033[0m \n(当前账号: %s)\n\n", oracleSection.Name())
+	fmt.Printf("\n实例信息 \n(当前账号: %s)\n\n", oracleSection.Name())
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 4, 8, 1, '\t', 0)
 	fmt.Fprintf(w, "%s\t%s\t%s\t%s\t\n", "序号", "名称", "状态　　", "配置")
@@ -334,7 +339,9 @@ func listInstances() {
 	}
 	w.Flush()
 	fmt.Println("--------------------")
-	fmt.Printf("\n\033[1;32ma: %s   b: %s   c: %s   d: %s\033[0m\n", "启动全部", "停止全部", "重启全部", "终止全部")
+	color.Set(color.FgGreen, color.Bold)
+	fmt.Printf("\na: %s   b: %s   c: %s   d: %s\n", "启动全部", "停止全部", "重启全部", "终止全部")
+        color.Unset()
 	var input string
 	var index int
 	for {
@@ -353,9 +360,13 @@ func listInstances() {
 				for _, ins := range instances {
 					_, err := instanceAction(ins.Id, core.InstanceActionActionStart)
 					if err != nil {
-						fmt.Printf("\033[1;31m实例 %s 启动失败.\033[0m %s\n", *ins.DisplayName, err.Error())
+						color.Set(color.Fgred)
+						fmt.Printf("实例 %s 启动失败. %s\n", *ins.DisplayName, err.Error())
+						color.Unset()
 					} else {
-						fmt.Printf("\033[1;32m实例 %s 启动成功.\033[0m\n", *ins.DisplayName)
+					        color.Set(color.FgGreen)
+						fmt.Printf("实例 %s 启动成功.\n", *ins.DisplayName)
+						color.Unset()
 					}
 				}
 			} else {
@@ -372,9 +383,13 @@ func listInstances() {
 				for _, ins := range instances {
 					_, err := instanceAction(ins.Id, core.InstanceActionActionSoftstop)
 					if err != nil {
-						fmt.Printf("\033[1;31m实例 %s 停止失败.\033[0m %s\n", *ins.DisplayName, err.Error())
+					        color.Set(color.Fgred)
+						fmt.Printf("实例 %s 停止失败. %s\n", *ins.DisplayName, err.Error())
+						color.Unset()
 					} else {
-						fmt.Printf("\033[1;32m实例 %s 停止成功.\033[0m\n", *ins.DisplayName)
+					        color.Set(color.FgGreen)
+						fmt.Printf("实例 %s 停止成功.\n", *ins.DisplayName)
+						color.Unset()
 					}
 				}
 			} else {
@@ -391,9 +406,13 @@ func listInstances() {
 				for _, ins := range instances {
 					_, err := instanceAction(ins.Id, core.InstanceActionActionSoftreset)
 					if err != nil {
-						fmt.Printf("\033[1;31m实例 %s 重启失败.\033[0m %s\n", *ins.DisplayName, err.Error())
+					        color.Set(color.Fgred)
+						fmt.Printf("实例 %s 重启失败. %s\n", *ins.DisplayName, err.Error())
+						color.Unset()
 					} else {
-						fmt.Printf("\033[1;32m实例 %s 重启成功.\033[0m\n", *ins.DisplayName)
+					        color.Set(color.FgGreen)
+						fmt.Printf("实例 %s 重启成功.\n", *ins.DisplayName)
+						color.Unset()
 					}
 				}
 			} else {
@@ -410,9 +429,13 @@ func listInstances() {
 				for _, ins := range instances {
 					err := terminateInstance(ins.Id)
 					if err != nil {
-						fmt.Printf("\033[1;31m实例 %s 终止失败.\033[0m %s\n", *ins.DisplayName, err.Error())
+					        color.Set(color.Fgred)
+						fmt.Printf("实例 %s 终止失败. %s\n", *ins.DisplayName, err.Error())
+						color.Unset()
 					} else {
-						fmt.Printf("\033[1;32m实例 %s 终止成功.\033[0m\n", *ins.DisplayName)
+					        color.Set(color.FgGreen)
+						fmt.Printf("实例 %s 终止成功.\n", *ins.DisplayName)
+						color.Unset()
 					}
 				}
 			} else {
@@ -428,7 +451,9 @@ func listInstances() {
 		} else {
 			input = ""
 			index = 0
-			fmt.Printf("\033[1;31m错误! 请输入正确的序号\033[0m\n")
+			color.Set(color.Fgred)
+			fmt.Printf("错误! 请输入正确的序号.\n")
+			color.UnSet()
 		}
 	}
 	instanceDetails(instances[index-1].Id)
@@ -439,14 +464,18 @@ func instanceDetails(instanceId *string) {
 		fmt.Println("正在获取实例详细信息...")
 		instance, err := getInstance(instanceId)
 		if err != nil {
-			fmt.Printf("\033[1;31m获取实例详细信息失败, 回车返回上一级菜单.\033[0m")
+                        color.Set(color.Fgred)
+			fmt.Printf("获取实例详细信息失败, 回车返回上一级菜单.")
+			color.UnSet()
 			fmt.Scanln()
 			listInstances()
 			return
 		}
 		vnics, err := getInstanceVnics(instanceId)
 		if err != nil {
-			fmt.Printf("\033[1;31m获取实例VNIC失败, 回车返回上一级菜单.\033[0m")
+		        color.Set(color.Fgred)
+			fmt.Printf("获取实例VNIC失败, 回车返回上一级菜单.")
+			color.UnSet()
 			fmt.Scanln()
 			listInstances()
 			return
@@ -463,8 +492,9 @@ func instanceDetails(instanceId *string) {
 			}
 			strPublicIps = strings.Join(publicIps, ",")
 		}
-
-		fmt.Printf("\n\033[1;32m实例详细信息\033[0m \n(当前账号: %s)\n\n", oracleSection.Name())
+                color.Set(color.FgGreen)
+		fmt.Printf("\n实例详细信息 \n(当前账号: %s)\n\n", oracleSection.Name())
+		color.UnSet()
 		fmt.Println("--------------------")
 		fmt.Printf("名称: %s\n", *instance.DisplayName)
 		fmt.Printf("状态: %s\n", getInstanceState(instance.LifecycleState))
@@ -475,7 +505,9 @@ func instanceDetails(instanceId *string) {
 		fmt.Printf("网络带宽(Gbps): %g\n", *instance.ShapeConfig.NetworkingBandwidthInGbps)
 		fmt.Printf("内存(GB): %g\n", *instance.ShapeConfig.MemoryInGBs)
 		fmt.Println("--------------------")
-		fmt.Printf("\n\033[1;32m1: %s   2: %s   3: %s   4: %s   5: %s\033[0m\n", "启动", "停止", "重启", "终止", "更换公共IP")
+                color.Set(color.FgGreen)
+		fmt.Printf("\n1: %s   2: %s   3: %s   4: %s   5: %s\n", "启动", "停止", "重启", "终止", "更换公共IP")
+		color.UnSet()
 		var input string
 		var num int
 		fmt.Print("\n请输入需要执行操作的序号: ")
@@ -485,27 +517,41 @@ func instanceDetails(instanceId *string) {
 		case 1:
 			_, err := instanceAction(instance.Id, core.InstanceActionActionStart)
 			if err != nil {
-				fmt.Printf("\033[1;31m启动实例失败.\033[0m %s\n", err.Error())
+			        color.Set(color.Fgred)
+				fmt.Printf("启动实例失败. %s\n", err.Error())
+				color.UnSet()
 			} else {
-				fmt.Printf("\033[1;32m正在启动实例, 请稍后查看实例状态\033[0m\n")
+			        color.Set(color.FgGreen)
+				fmt.Printf("正在启动实例, 请稍后查看实例状态.\n")
+				color.UnSet()
 			}
 			time.Sleep(3 * time.Second)
 
 		case 2:
 			_, err := instanceAction(instance.Id, core.InstanceActionActionSoftstop)
 			if err != nil {
-				fmt.Printf("\033[1;31m停止实例失败.\033[0m %s\n", err.Error())
+			        color.Set(color.Fgred)
+				fmt.Printf("停止实例失败. %s\n", err.Error())
+				color.UnSet()
+
 			} else {
-				fmt.Printf("\033[1;32m正在停止实例, 请稍后查看实例状态\033[0m\n")
+                                color.Set(color.FgGreen)
+				fmt.Printf("正在停止实例, 请稍后查看实例状态.\n")
+				color.UnSet()
+
 			}
 			time.Sleep(3 * time.Second)
 
 		case 3:
 			_, err := instanceAction(instance.Id, core.InstanceActionActionSoftreset)
 			if err != nil {
-				fmt.Printf("\033[1;31m重启实例失败.\033[0m %s\n", err.Error())
+			        color.Set(color.Fgred)
+				fmt.Printf("重启实例失败. %s\n", err.Error())
+				color.UnSet()
 			} else {
-				fmt.Printf("\033[1;32m正在重启实例, 请稍后查看实例状态\033[0m\n")
+			        color.Set(color.FgGreen)
+				fmt.Printf("正在重启实例, 请稍后查看实例状态.\n")
+				color.UnSet()
 			}
 			time.Sleep(3 * time.Second)
 
@@ -516,16 +562,22 @@ func instanceDetails(instanceId *string) {
 			if strings.EqualFold(input, "y") {
 				err := terminateInstance(instance.Id)
 				if err != nil {
-					fmt.Printf("\033[1;31m终止实例失败.\033[0m %s\n", err.Error())
+				        color.Set(color.Fgred)
+					fmt.Printf("终止实例失败. %s\n", err.Error())
+					color.UnSet()
 				} else {
-					fmt.Printf("\033[1;32m正在终止实例, 请稍后查看实例状态\033[0m\n")
+                                        color.Set(color.FgGreen)
+					fmt.Printf("正在终止实例, 请稍后查看实例状态\n")
+					color.UnSet()
 				}
 				time.Sleep(3 * time.Second)
 			}
 
 		case 5:
 			if len(vnics) == 0 {
-				fmt.Printf("\033[1;31m实例已终止或获取实例VNIC失败，请稍后重试.\033[0m\n")
+			        color.Set(color.Fgred)
+				fmt.Printf("实例已终止或获取实例VNIC失败，请稍后重试.\n")
+				color.UnSet()
 				break
 			}
 			fmt.Printf("将删除当前公共IP并创建一个新的公共IP。确定更换实例公共IP？(输入 y 并回车): ")
@@ -534,9 +586,13 @@ func instanceDetails(instanceId *string) {
 			if strings.EqualFold(input, "y") {
 				publicIp, err := changePublicIp(vnics)
 				if err != nil {
-					fmt.Printf("\033[1;31m更换实例公共IP失败.\033[0m %s\n", err.Error())
+				        color.Set(color.Fgred)
+					fmt.Printf("更换实例公共IP失败. %s\n", err.Error())
+					color.UnSet()
 				} else {
-					fmt.Printf("\033[1;32m更换实例公共IP成功, 实例公共IP: \033[0m%s\n", *publicIp.IpAddress)
+				        color.Set(color.FgGreen)
+					fmt.Printf("更换实例公共IP成功, 实例公共IP: %s\n", *publicIp.IpAddress)
+					color.UnSet()
 				}
 				time.Sleep(3 * time.Second)
 			}
@@ -564,8 +620,9 @@ func listBootVolumes() {
 		}(ad.Name)
 	}
 	wg.Wait()
-
-	fmt.Printf("\n\033[1;32m引导卷\033[0m \n(当前账号: %s)\n\n", oracleSection.Name())
+        color.Set(color.FgGreen)
+	fmt.Printf("\n引导卷\ \n(当前账号: %s)\n\n", oracleSection.Name())
+	color.UnSet()
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 4, 8, 1, '\t', 0)
 	fmt.Fprintf(w, "%s\t%s\t%s\t%s\t\n", "序号", "名称", "状态　　", "大小(GB)")
@@ -589,7 +646,9 @@ func listBootVolumes() {
 		} else {
 			input = ""
 			index = 0
-			fmt.Printf("\033[1;31m错误! 请输入正确的序号\033[0m\n")
+			color.Set(color.Fgred)
+			fmt.Printf("错误! 请输入正确的序号.\n")
+			color.UnSet()
 		}
 	}
 	bootvolumeDetails(bootVolumes[index-1].Id)
@@ -600,7 +659,9 @@ func bootvolumeDetails(bootVolumeId *string) {
 		fmt.Println("正在获取引导卷详细信息...")
 		bootVolume, err := getBootVolume(bootVolumeId)
 		if err != nil {
-			fmt.Printf("\033[1;31m获取引导卷详细信息失败, 回车返回上一级菜单.\033[0m")
+		        color.Set(color.Fgred)
+			fmt.Printf("获取引导卷详细信息失败, 回车返回上一级菜单.")
+			color.UnSet()
 			fmt.Scanln()
 			listBootVolumes()
 			return
@@ -630,8 +691,9 @@ func bootvolumeDetails(bootVolumeId *string) {
 		default:
 			performance = fmt.Sprintf("UHP (VPU:%d)", *bootVolume.VpusPerGB)
 		}
-
-		fmt.Printf("\n\033[1;32m引导卷详细信息\033[0m \n(当前账号: %s)\n\n", oracleSection.Name())
+                color.Set(color.FgGreen)
+		fmt.Printf("\n引导卷详细信息 \n(当前账号: %s)\n\n", oracleSection.Name())
+                color.UnSet()
 		fmt.Println("--------------------")
 		fmt.Printf("名称: %s\n", *bootVolume.DisplayName)
 		fmt.Printf("状态: %s\n", getBootVolumeState(bootVolume.LifecycleState))
@@ -640,7 +702,9 @@ func bootvolumeDetails(bootVolumeId *string) {
 		fmt.Printf("性能: %s\n", performance)
 		fmt.Printf("附加的实例: %s\n", strings.Join(attachIns, ","))
 		fmt.Println("--------------------")
-		fmt.Printf("\n\033[1;32m1: %s   2: %s   3: %s   4: %s\033[0m\n", "修改性能", "修改大小", "分离引导卷", "终止引导卷")
+                color.Set(color.FgGreen)
+		fmt.Printf("\n1: %s   2: %s   3: %s   4: %s\n", "修改性能", "修改大小", "分离引导卷", "终止引导卷")
+		color.UnSet()
 		var input string
 		var num int
 		fmt.Print("\n请输入需要执行操作的序号: ")
@@ -654,19 +718,29 @@ func bootvolumeDetails(bootVolumeId *string) {
 			if input == "1" {
 				_, err := updateBootVolume(bootVolume.Id, nil, common.Int64(10))
 				if err != nil {
-					fmt.Printf("\033[1;31m修改引导卷性能失败.\033[0m %s\n", err.Error())
+                                        color.Set(color.Fgred)
+					fmt.Printf("修改引导卷性能失败.\033[0m %s\n", err.Error())
+					color.UnSet()
 				} else {
-					fmt.Printf("\033[1;32m修改引导卷性能成功, 请稍后查看引导卷状态\033[0m\n")
+				        color.Set(color.Green)
+					fmt.Printf("修改引导卷性能成功, 请稍后查看引导卷状态.\n")
+					color.UnSet()
 				}
 			} else if input == "2" {
 				_, err := updateBootVolume(bootVolume.Id, nil, common.Int64(20))
 				if err != nil {
-					fmt.Printf("\033[1;31m修改引导卷性能失败.\033[0m %s\n", err.Error())
+				        color.Set(color.Fgred)
+					fmt.Printf("修改引导卷性能失败. %s\n", err.Error())
+					color.UnSet()
 				} else {
-					fmt.Printf("\033[1;32m修改引导卷性能成功, 请稍后查看引导卷信息\033[0m\n")
+				        color.Set(color.FgGreen)
+					fmt.Printf("修改引导卷性能成功, 请稍后查看引导卷信息.\n")
+					color.UnSet()
 				}
 			} else {
-				fmt.Printf("\033[1;31m输入错误.\033[0m\n")
+                                color.Set(color.Fgred)
+				fmt.Printf("输入错误.\n")
+				color.UnSet()
 			}
 			time.Sleep(1 * time.Second)
 
@@ -679,12 +753,18 @@ func bootvolumeDetails(bootVolumeId *string) {
 			if sizeInGBs > 0 {
 				_, err := updateBootVolume(bootVolume.Id, &sizeInGBs, nil)
 				if err != nil {
-					fmt.Printf("\033[1;31m修改引导卷大小失败.\033[0m %s\n", err.Error())
+				        color.Set(color.Fgred)
+					fmt.Printf("修改引导卷大小失败. %s\n", err.Error())
+					color.UnSet()
 				} else {
-					fmt.Printf("\033[1;32m修改引导卷大小成功, 请稍后查看引导卷信息\033[0m\n")
+				        color.Set(color.FgGreen)
+					fmt.Printf("修改引导卷大小成功, 请稍后查看引导卷信息.\n")
+					color.UnSet()
 				}
 			} else {
-				fmt.Printf("\033[1;31m输入错误.\033[0m\n")
+			        color.Set(color.Fgred)
+				fmt.Printf("输入错误.\n")
+				color.UnSet()
 			}
 			time.Sleep(1 * time.Second)
 
@@ -696,9 +776,13 @@ func bootvolumeDetails(bootVolumeId *string) {
 				for _, attachment := range attachments {
 					_, err := detachBootVolume(attachment.Id)
 					if err != nil {
-						fmt.Printf("\033[1;31m分离引导卷失败.\033[0m %s\n", err.Error())
+					        color.Set(color.Fgred)
+						fmt.Printf("分离引导卷失败. %s\n", err.Error())
+						color.UnSet()
 					} else {
-						fmt.Printf("\033[1;32m分离引导卷成功, 请稍后查看引导卷信息\033[0m\n")
+					        color.Set(color.FgGreen)
+						fmt.Printf("分离引导卷成功, 请稍后查看引导卷信息.\n")
+						color.UnSet()
 					}
 				}
 			}
@@ -711,9 +795,13 @@ func bootvolumeDetails(bootVolumeId *string) {
 			if strings.EqualFold(input, "y") {
 				_, err := deleteBootVolume(bootVolume.Id)
 				if err != nil {
-					fmt.Printf("\033[1;31m终止引导卷失败.\033[0m %s\n", err.Error())
+                                        color.Set(color.Fgred)
+					fmt.Printf("终止引导卷失败. %s\n", err.Error())
+					color.UnSet()
 				} else {
-					fmt.Printf("\033[1;32m终止引导卷成功, 请稍后查看引导卷信息\033[0m\n")
+				        color.Set(color.FgGreen)
+					fmt.Printf("终止引导卷成功, 请稍后查看引导卷信息\n")
+					color.UnSet()
 				}
 
 			}
@@ -731,14 +819,18 @@ func listLaunchInstanceTemplates() {
 	instanceSections = append(instanceSections, instanceBaseSection.ChildSections()...)
 	instanceSections = append(instanceSections, oracleSection.ChildSections()...)
 	if len(instanceSections) == 0 {
-		fmt.Printf("\033[1;31m未找到实例模版, 回车返回上一级菜单.\033[0m")
+	        color.Set(color.red)
+		fmt.Printf("未找到实例模版, 回车返回上一级菜单.")
+		color.UnSet()
 		fmt.Scanln()
 		showMainMenu()
 		return
 	}
 
 	for {
-		fmt.Printf("\n\033[1;32m选择对应的实例模版开始创建实例\033[0m \n(当前账号: %s)\n\n", oracleSectionName)
+	        color.Set(color.FgGreen)
+		fmt.Printf("\n选择对应的实例模版开始创建实例 \n(当前账号: %s)\n\n", oracleSectionName)
+		color.UnSet()
 		w := new(tabwriter.Writer)
 		w.Init(os.Stdout, 4, 8, 1, '\t', 0)
 		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t\n", "序号", "配置", "CPU个数", "内存(GB)")
@@ -770,7 +862,9 @@ func listLaunchInstanceTemplates() {
 			} else {
 				input = ""
 				index = 0
-				fmt.Printf("\033[1;31m错误! 请输入正确的序号\033[0m\n")
+				color.Set(color.FgRed)
+				fmt.Printf("错误! 请输入正确的序号\n")
+				color.UnSet()
 			}
 		}
 
@@ -811,8 +905,9 @@ func batchLaunchInstances(oracleSec *ini.Section) {
 	if len(instanceSections) == 0 {
 		return
 	}
-
-	printf("\033[1;36m[%s] 开始创建\033[0m\n", oracleSectionName)
+        color.Set(color.FgCyan)
+	printf("[%s] 开始创建\n", oracleSectionName)
+	color.UnSet()
 	var SUM, NUM int32 = 0, 0
 	sendMessage(fmt.Sprintf("[%s]", oracleSectionName), "开始创建")
 
@@ -830,7 +925,9 @@ func batchLaunchInstances(oracleSec *ini.Section) {
 		NUM = NUM + num
 
 	}
-	printf("\033[1;36m[%s] 结束创建。创建实例总数: %d, 成功 %d , 失败 %d\033[0m\n", oracleSectionName, SUM, NUM, SUM-NUM)
+	color.Set(color.FgCyan)
+	printf("[%s] 结束创建。创建实例总数: %d, 成功 %d , 失败 %d\n", oracleSectionName, SUM, NUM, SUM-NUM)
+	color.UnSet()
 	text := fmt.Sprintf("结束创建。创建实例总数: %d, 成功 %d , 失败 %d", SUM, NUM, SUM-NUM)
 	sendMessage(fmt.Sprintf("[%s]", oracleSectionName), text)
 }
@@ -1021,9 +1118,11 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	} else {
 		bootVolumeSize = math.Round(float64(*image.SizeInMBs) / float64(1024))
 	}
-	printf("\033[1;36m[%s] 开始创建 %s 实例, OCPU: %g 内存: %g 引导卷: %g \033[0m\n", oracleSectionName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize)
+        color.Set(color.FgCyan)
+	printf("[%s] 开始创建 %s 实例, OCPU: %g 内存: %g 引导卷: %g \n", oracleSectionName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize)
+	color.UnSet()
 	if EACH {
-		text := fmt.Sprintf("正在尝试创建第 %d 个实例...⏳\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
+		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("", text)
 		if err != nil {
 			printlnErr("Telegram 消息提醒发送失败", err.Error())
@@ -1052,8 +1151,10 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		}
 
 		runTimes++
-		printf("\033[1;36m[%s] 正在尝试创建第 %d 个实例, AD: %s\033[0m\n", oracleSectionName, pos+1, *adName)
-		printf("\033[1;36m[%s] 当前尝试次数: %d \033[0m\n", oracleSectionName, runTimes)
+		color.Set(color.FgCyan)
+		printf("[%s] 正在尝试创建第 %d 个实例, AD: %s\033[0m\n", oracleSectionName, pos+1, *adName)
+		printf("[%s] 当前尝试次数: %d \n", oracleSectionName, runTimes)
+		color.UnSet()
 		request.AvailabilityDomain = adName
 		createResp, err := computeClient.LaunchInstance(ctx, request)
 
@@ -1063,25 +1164,32 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			num++ //成功个数+1
 
 			duration := fmtDuration(time.Since(startTime))
-
-			printf("\033[1;32m[%s] 第 %d 个实例抢到了🎉, 正在启动中请稍等...⌛️ \033[0m\n", oracleSectionName, pos+1)
+			color.Set(color.FgGreen)
+			printf("[%s] 第 %d 个实例抢到了, 正在启动中请稍等... \n", oracleSectionName, pos+1)
+			color.UnSet()	
 			var msg Message
 			var msgErr error
 			var text string
 			if EACH {
-				text = fmt.Sprintf("第 %d 个实例抢到了🎉, 正在启动中请稍等...⌛️\n区域: %s\n实例名称: %s\n公共IP: 获取中...⏳\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
+				color.Set(color.FgGreen)
+				text = fmt.Sprintf("第 %d 个实例抢到了, 正在启动中请稍等...\n区域: %s\n实例名称: %s\n公共IP: 获取中...\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
+				color.UnSet()				
 				msg, msgErr = sendMessage("", text)
 			}
 			// 获取实例公共IP
 			var strIps string
 			ips, err := getInstancePublicIps(createResp.Instance.Id)
 			if err != nil {
-				printf("\033[1;32m[%s] 第 %d 个实例抢到了🎉, 但是启动失败❌ 错误信息: \033[0m%s\n", oracleSectionName, pos+1, err.Error())
-				text = fmt.Sprintf("第 %d 个实例抢到了🎉, 但是启动失败❌实例已被终止😔\n区域: %s\n实例名称: %s\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
+			        color.Set(color.FgYellow)
+				printf("[%s] 第 %d 个实例抢到了, 但是启动失败，错误信息: %s\n", oracleSectionName, pos+1, err.Error())
+				color.UnSet()
+				text = fmt.Sprintf("第 %d 个实例抢到了, 但是启动失败，实例已被终止。\n区域: %s\n实例名称: %s\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 			} else {
 				strIps = strings.Join(ips, ",")
-				printf("\033[1;32m[%s] 第 %d 个实例抢到了🎉, 启动成功✅. 实例名称: %s, 公共IP: %s\033[0m\n", oracleSectionName, pos+1, *createResp.Instance.DisplayName, strIps)
-				text = fmt.Sprintf("第 %d 个实例抢到了🎉, 启动成功✅\n区域: %s\n实例名称: %s\n公共IP: %s\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, strIps, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
+				color.Set(color.FgGreen)
+				printf("[%s] 第 %d 个实例抢到了, 启动成功. 实例名称: %s, 公共IP: %s\n", oracleSectionName, pos+1, *createResp.Instance.DisplayName, strIps)
+				color.UnSet()
+				text = fmt.Sprintf("第 %d 个实例抢到了, 启动成功\n区域: %s\n实例名称: %s\n公共IP: %s\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, strIps, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 			}
 			if EACH {
 				if msgErr != nil {
@@ -1119,9 +1227,11 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 					errInfo = servErr.GetMessage()
 				}
 				duration := fmtDuration(time.Since(startTime))
-				printf("\033[1;31m[%s] 第 %d 个实例创建失败了❌, 错误信息: \033[0m%s\n", oracleSectionName, pos+1, errInfo)
+				color.Set(color.FgRed)
+				printf("[%s] 第 %d 个实例创建失败了, 错误信息: %s\n", oracleSectionName, pos+1, errInfo)
+				color.UnSet()
 				if EACH {
-					text := fmt.Sprintf("第 %d 个实例创建失败了❌\n错误信息: %s\n区域: %s\n可用性域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时:%s", pos+1, errInfo, oracle.Region, *adName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
+					text := fmt.Sprintf("第 %d 个实例创建失败了\n错误信息: %s\n区域: %s\n可用性域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时:%s", pos+1, errInfo, oracle.Region, *adName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 					sendMessage("", text)
 				}
 
@@ -1135,8 +1245,9 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				if isServErr {
 					errInfo = servErr.GetMessage()
 				}
-				printf("\033[1;31m[%s] 创建失败, Error: \033[0m%s\n", oracleSectionName, errInfo)
-
+				color.Set(color.FgRed)
+				printf("[%s] 创建失败, Error: %s\n", oracleSectionName, errInfo)
+				color.UnSet()
 				SKIP_RETRY = false
 				if AD_NOT_FIXED && !EACH_AD {
 					SKIP_RETRY_MAP[adIndex-1] = false
@@ -1215,7 +1326,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		pos++
 
 		if pos < sum && EACH {
-			text := fmt.Sprintf("正在尝试创建第 %d 个实例...⏳\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
+			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 			sendMessage("", text)
 		}
 	}
@@ -2069,7 +2180,7 @@ func getInstancePublicIps(instanceId *string) (ips []string, err error) {
 				continue
 			}
 			if ins.LifecycleState == core.InstanceLifecycleStateTerminating || ins.LifecycleState == core.InstanceLifecycleStateTerminated {
-				err = errors.New("实例已终止😔")
+				err = errors.New("实例已终止")
 				return
 			}
 			// if ins.LifecycleState != core.InstanceLifecycleStateRunning {
@@ -2179,7 +2290,7 @@ func sendMessage(name, text string) (msg Message, err error) {
 		data := url.Values{
 			"parse_mode": {"Markdown"},
 			"chat_id":    {chat_id},
-			"text":       {"🔰*甲骨文通知* " + name + "\n" + text},
+			"text":       {"*甲骨文通知* " + name + "\n" + text},
 		}
 		var req *http.Request
 		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
@@ -2217,7 +2328,7 @@ func editMessage(messageId int, name, text string) (msg Message, err error) {
 			"parse_mode": {"Markdown"},
 			"chat_id":    {chat_id},
 			"message_id": {strconv.Itoa(messageId)},
-			"text":       {"🔰*甲骨文通知* " + name + "\n" + text},
+			"text":       {"*甲骨文通知* " + name + "\n" + text},
 		}
 		var req *http.Request
 		req, err = http.NewRequest(http.MethodPost, editMessageUrl, strings.NewReader(data.Encode()))
@@ -2347,7 +2458,9 @@ func printf(format string, a ...interface{}) {
 }
 
 func printlnErr(desc, detail string) {
-	fmt.Printf("\033[1;31mError: %s. %s\033[0m\n", desc, detail)
+        color.Set(color.Fgred, color.Bold)
+	fmt.Printf("Error: %s. %s\n", desc, detail)
+	color.Unset()
 }
 
 func getCustomRequestMetadataWithRetryPolicy() common.RequestMetadata {
