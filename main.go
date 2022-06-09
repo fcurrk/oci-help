@@ -47,6 +47,7 @@ import (
 	"github.com/oracle/oci-go-sdk/v54/example/helpers"
 	"github.com/oracle/oci-go-sdk/v54/identity"
 	"gopkg.in/ini.v1"
+	"github.com/fatih/color"
 )
 
 const (
@@ -152,7 +153,8 @@ func main() {
 		}
 	}
 	if len(oracleSections) == 0 {
-		fmt.Printf("\033[1;31m未找到正确的配置信息, 请参考链接文档配置相关信息。链接: https://github.com/lemoex/oci-help\033[0m\n")
+	        color.Set(color.FgGreen, color.Bold)
+		fmt.Printf("未找到正确的配置信息, 请参考链接文档配置相关信息。链接: https://github.com/lemoex/oci-help\033[0m\n")
 		return
 	}
 	instanceBaseSection = cfg.Section("INSTANCE")
@@ -261,10 +263,12 @@ func initVar(oracleSec *ini.Section) (err error) {
 }
 
 func showMainMenu() {
-	fmt.Printf("\n\033[1;32m欢迎使用甲骨文实例管理工具\033[0m \nVersion：V%s\n\n(当前账号: %s)\n\n", Version, oracleSection.Name())
-	fmt.Printf("\033[1;36m%s\033[0m %s\n", "1.", "查看实例")
-	fmt.Printf("\033[1;36m%s\033[0m %s\n", "2.", "创建实例")
-	fmt.Printf("\033[1;36m%s\033[0m %s\n", "3.", "管理引导卷")
+        color.Set(color.FgGreen, color.Bold)
+	fmt.Printf("\n欢迎使用甲骨文实例管理工具 \nVersion：V%s\n\n(当前账号: %s)\n\n", Version, oracleSection.Name())
+	fmt.Printf("%s %s\n", "1.", "查看实例")
+	fmt.Printf("%s %s\n", "2.", "创建实例")
+	color.Unset()
+	fmt.Printf("%s %s\n", "3.", "管理引导卷")
 	fmt.Print("\n请输入序号进入相关操作: ")
 	var input string
 	var num int
