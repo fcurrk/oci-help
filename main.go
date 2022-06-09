@@ -722,7 +722,7 @@ func bootvolumeDetails(bootVolumeId *string) {
 					fmt.Printf("修改引导卷性能失败.\033[0m %s\n", err.Error())
 					color.Unset()
 				} else {
-				        color.Set(color.Green)
+				        color.Set(color.FgGreen)
 					fmt.Printf("修改引导卷性能成功, 请稍后查看引导卷状态.\n")
 					color.Unset()
 				}
@@ -819,7 +819,7 @@ func listLaunchInstanceTemplates() {
 	instanceSections = append(instanceSections, instanceBaseSection.ChildSections()...)
 	instanceSections = append(instanceSections, oracleSection.ChildSections()...)
 	if len(instanceSections) == 0 {
-	        color.Set(color.red)
+	        color.Set(color.Fgred)
 		fmt.Printf("未找到实例模版, 回车返回上一级菜单.")
 		color.Unset()
 		fmt.Scanln()
