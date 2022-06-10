@@ -43,10 +43,10 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/oracle/oci-go-sdk/v54/common"
-	"github.com/oracle/oci-go-sdk/v54/core"
-	"github.com/oracle/oci-go-sdk/v54/example/helpers"
-	"github.com/oracle/oci-go-sdk/v54/identity"
+	"github.com/oracle/oci-go-sdk/v65/common"
+	"github.com/oracle/oci-go-sdk/v65/core"
+	"github.com/oracle/oci-go-sdk/v65/example/helpers"
+	"github.com/oracle/oci-go-sdk/v65/identity"
 	"gopkg.in/ini.v1"
 )
 
@@ -342,7 +342,7 @@ func listInstances() {
 	w.Flush()
 	fmt.Println("--------------------")
 	color.Set(color.FgGreen, color.Bold)
-	fmt.Printf("\na: %s   b: %s   c: %s   d: %s\n", "启动全部", "停止全部", "重启全部", "终止全部")
+	fmt.Printf("\na: %s   b: %s   c: %s   d: %s   0: %s\n", "启动全部", "停止全部", "重启全部", "终止全部", "返回")
         color.Unset()
 	var input string
 	var index int
@@ -354,6 +354,9 @@ func listInstances() {
 			return
 		}
 		switch input {
+		case 0:
+		showMainMenu()
+		return
 		case "a":
 			fmt.Printf("确定启动全部实例？(输入 y 并回车): ")
 			var input string
@@ -508,7 +511,7 @@ func instanceDetails(instanceId *string) {
 		fmt.Printf("内存(GB): %g\n", *instance.ShapeConfig.MemoryInGBs)
 		fmt.Println("--------------------")
                 color.Set(color.FgGreen)
-		fmt.Printf("\n1: %s   2: %s   3: %s   4: %s   5: %s\n", "启动", "停止", "重启", "终止", "更换公共IP")
+		fmt.Printf("\n1: %s   2: %s   3: %s   4: %s   5: %s   0: %s\n", "启动", "停止", "重启", "终止", "更换公共IP", "返回")
 		color.Unset()
 		var input string
 		var num int
@@ -516,6 +519,9 @@ func instanceDetails(instanceId *string) {
 		fmt.Scanln(&input)
 		num, _ = strconv.Atoi(input)
 		switch num {
+		case 0:
+		        listInstances()
+			return
 		case 1:
 			_, err := instanceAction(instance.Id, core.InstanceActionActionStart)
 			if err != nil {
@@ -636,7 +642,7 @@ func listBootVolumes() {
 	var input string
 	var index int
 	for {
-		fmt.Print("请输入序号查看引导卷详细信息: ")
+		fmt.Print("请输入序号查看引导卷详细信息,回车返回上一级菜单: ")
 		_, err := fmt.Scanln(&input)
 		if err != nil {
 			showMainMenu()
@@ -709,7 +715,7 @@ func bootvolumeDetails(bootVolumeId *string) {
 		color.Unset()
 		var input string
 		var num int
-		fmt.Print("\n请输入需要执行操作的序号: ")
+		fmt.Print("\n请输入需要执行操作的序号,回车返回上一级菜单: ")
 		fmt.Scanln(&input)
 		num, _ = strconv.Atoi(input)
 		switch num {
