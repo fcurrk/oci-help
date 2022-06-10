@@ -2303,8 +2303,8 @@ func sendMessage(name, text string) (msg Message, err error) {
 	     if chat_id == "wx" {
 		data := url.Values{
 			"parse_mode": {"Markdown"},
-			"title":    {"*甲骨文通知*"},
-			"content":   {name + "\n" + text},
+			"chat_id":    {chat_id},
+			"text":   {name + "\n" + text},
 		        }
 		} else {
 		        data := url.Values{
@@ -2348,8 +2348,8 @@ func editMessage(messageId int, name, text string) (msg Message, err error) {
 	     if chat_id == "wx" {
 		data := url.Values{
 			"parse_mode": {"Markdown"},
-			"title":    {"*甲骨文通知*"},
-			"content":   {name + "\n" + text},
+			"chat_id":    {chat_id},
+			"text":   {name + "\n" + text},
 		        }
 		} else {
 		        data := url.Values{
