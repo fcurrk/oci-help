@@ -2,7 +2,7 @@
 #!/bin/bash
 
 BUILD() {
-  go mod tidy
+  go get -u && go mod tidy
   cd oci-help
   appName="oci-help"
   rm -rf .git/
