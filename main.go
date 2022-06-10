@@ -74,6 +74,7 @@ var (
 	token               string
 	chat_id             string
 	sendMessageUrl      string
+	sendMessageUrlwx    string
 	editMessageUrl      string
 	EACH                bool
 	availabilityDomains []identity.AvailabilityDomain
