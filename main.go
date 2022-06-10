@@ -70,6 +70,7 @@ var (
 	instanceBaseSection *ini.Section
 	instance            Instance
 	proxy               string
+	wx_web              string
 	token               string
 	chat_id             string
 	sendMessageUrl      string
@@ -1338,11 +1339,12 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 
 		// for 循环次数+1
 		pos++
-
-#		if pos < sum && EACH {
+		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
+		sendMessage("", text)
+		if pos < sum && EACH {
 			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 			sendMessage("", text)
-#		}
+		}
 	}
 	return
 }
