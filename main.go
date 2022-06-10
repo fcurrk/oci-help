@@ -2312,7 +2312,7 @@ func sendMessage(name, text string) (msg Message, err error) {
 		var req *http.Request
 		if chat_id == "wx" {
 		req, err = http.NewRequest(http.MethodGet, sendMessageUrl, strings.NewReader(data.Encode()))  
-		req, err = http.NewRequest(http.MethodGet, sendMessageUrl, "text=123456")  
+		req, err = http.NewRequest(http.MethodGet, sendMessageUrl, "text%3d123456")  
 		}else{
 		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
 		}
