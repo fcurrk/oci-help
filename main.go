@@ -2301,7 +2301,7 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func postDemo(name, text string) {
+func postDemo1(name, text string) {
 	client := &http.Client{}
 	m1 := make(map[string]interface{})
 	m1["title"] = "OCI操作消息"
@@ -2309,6 +2309,22 @@ func postDemo(name, text string) {
 	respdata,_:=json.Marshal(m1)
 	req,_:=http.NewRequest("POST",sendMessageUrl,bytes.NewReader(respdata))
 	resp,_:= client.Do(req)
+	body,_:= ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	printf("[%s] 第 %d 个实例抢到了, 启动成功. 实例名称: %s, 公共IP: %s\n", oracleSectionName, pos+1, *createResp.Instance.DisplayName, strIps)
+}
+
+func postDemo(name, text string)  {
+	apiUrl :=sendMessageUrl
+	data := url.Values{}
+	data.Add("title","test")
+	data.Add("text","20220607")
+	u,_:= url.ParseRequestURI(apiUrl)
+	u.RawQuery = data.Encode()
+	client := &http.Client{}
+	req,_:= http.NewRequest("POST",u.String(),nil)
+	resp,_ := client.Do(req)
+	defer resp.Body.Close()
 	body,_:= ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
 }
