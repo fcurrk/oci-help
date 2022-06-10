@@ -154,7 +154,7 @@ func main() {
 	}
 	if len(oracleSections) == 0 {
 	        color.Set(color.FgGreen)
-		fmt.Printf("未找到正确的配置信息, 请参考链接文档配置相关信息。链接: https://github.com/lemoex/oci-help\n")
+		fmt.Printf("未找到正确的配置信息, 请参考链接文档配置相关信息。链接: https://github.com/fcurrk/oci-help\n")
 		color.Unset()
 		return
 	}

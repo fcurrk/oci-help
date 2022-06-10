@@ -26,7 +26,6 @@ jobs:
           docker pull techknowlogick/xgo:latest
           go install src.techknowlogick.com/xgo@latest
           sudo apt install upx
-	  OCI_HELP_TAG=$(git describe --tags)
 
       - name: Build
         run: |
@@ -36,5 +35,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.Install dependencies.outputs.OCI_HELP_TAG }}
+          name: artifact
           path: oci-help/build
