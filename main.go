@@ -2300,9 +2300,8 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessage(name, text string) (msg Message, err error) {
 	if token != "" && chat_id != "" {
-             var data 
 	     if chat_id == "wx" {
-		data = url.Values{
+		data := url.Values{
 			"parse_mode": {"Markdown"},
 			"title":    {"*甲骨文通知*"},
 			"content":   {name + "\n" + text},
@@ -2346,9 +2345,8 @@ func sendMessage(name, text string) (msg Message, err error) {
 
 func editMessage(messageId int, name, text string) (msg Message, err error) {
 	if token != "" && chat_id != "" {
-	     var data 
 	     if chat_id == "wx" {
-		data = url.Values{
+		data := url.Values{
 			"parse_mode": {"Markdown"},
 			"title":    {"*甲骨文通知*"},
 			"content":   {name + "\n" + text},
