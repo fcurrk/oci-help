@@ -342,7 +342,7 @@ func listInstances() {
 	w.Flush()
 	fmt.Println("--------------------")
 	color.Set(color.FgGreen, color.Bold)
-	fmt.Printf("\na: %s   b: %s   c: %s   d: %s   0: %s\n", "启动全部", "停止全部", "重启全部", "终止全部", "返回")
+	fmt.Printf("\na: %s   b: %s   c: %s   d: %s   x: %s\n", "启动全部", "停止全部", "重启全部", "终止全部", "返回")
         color.Unset()
 	var input string
 	var index int
@@ -354,7 +354,7 @@ func listInstances() {
 			return
 		}
 		switch input {
-		case 0:
+		case "x":
 		showMainMenu()
 		return
 		case "a":
