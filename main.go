@@ -2317,7 +2317,7 @@ func postDemo(name, text string)  {
 	apiUrl :=sendMessageUrl
 	data := url.Values{}
 	data.Add("title","test")
-	data.Add("text","20220607")
+	data.Add("text","这是中文示例.\n没有成功")
 	u,_:= url.ParseRequestURI(apiUrl)
 	u.RawQuery = data.Encode()
 	client := &http.Client{}
