@@ -2301,31 +2301,19 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func postDemo1(name, text string) {
-	client := &http.Client{}
-	m1 := make(map[string]interface{})
-	m1["title"] = "OCI操作消息"
-	m1["text"] = "*甲骨文通知* " + name + "\n" + text
-	respdata,_:=json.Marshal(m1)
-	req,_:=http.NewRequest("POST",sendMessageUrl,bytes.NewReader(respdata))
-	resp,_:= client.Do(req)
-	body,_:= ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
-}
-
 func postDemo(name, text string)  {
 	apiUrl :=sendMessageUrl
 	data := url.Values{}
-	data.Add("title","test")
-	data.Add("text","这是中文示例.\n没有成功")
+	data.Add("title","OCI消息"+name)
+	data.Add("text",text)
 	u,_:= url.ParseRequestURI(apiUrl)
 	u.RawQuery = data.Encode()
 	client := &http.Client{}
 	req,_:= http.NewRequest("POST",u.String(),nil)
 	resp,_ := client.Do(req)
 	defer resp.Body.Close()
-	body,_:= ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
+//body,_:= ioutil.ReadAll(resp.Body)
+//fmt.Println(string(body))
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
