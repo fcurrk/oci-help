@@ -137,8 +137,8 @@ func main() {
 		EACH = true
 	}
 	if token != "" && chat_id == "wx" {
-	sendMessageUrl = "https://www.92shidai.com/wechat_ft_get.php"
-	editMessageUrl = "https://www.92shidai.com/wechat_ft_get.php"
+	sendMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
+	editMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
 	} else {
 	sendMessageUrl = "https://api.telegram.org/bot" + token + "/sendMessage"
 	editMessageUrl = "https://api.telegram.org/bot" + token + "/editMessageText"
@@ -2311,8 +2311,8 @@ func sendMessage(name, text string) (msg Message, err error) {
 		}
 		var req *http.Request
 		if chat_id == "wx" {
-		req, err = http.NewRequest(http.MethodGet, sendMessageUrl, strings.NewReader(data.Encode()))  
-		req, err = http.NewRequest(http.MethodGet, sendMessageUrl, "text")  
+		strData := url.QueryEscape(data)
+		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(strData))  
 		}else{
 		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
 		}
