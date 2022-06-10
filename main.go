@@ -2300,7 +2300,7 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessage(name, text string) (msg Message, err error) {
 	if token != "" && chat_id != "" {
-		data = url.Values{
+		data := url.Values{
 		       "parse_mode": {"Markdown"},
 		       "chat_id":    {chat_id},
 		       "title":      {"OCI操作消息"},
