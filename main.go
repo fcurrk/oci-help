@@ -1139,7 +1139,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("", text)
 		if err != nil {
-			printlnErr("Telegram 消息提醒发送失败", err.Error())
+			printlnErr("消息提醒发送失败", err.Error())
 		}
 	}
 
@@ -1296,7 +1296,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 						}
 
 						// 判断是否需要重试
-						if (retry < 0 || failTimes <= retry) && adCount > 0 {
+						if (retry < 0 || failTimes < retry) && adCount > 0 {
 							continue
 						}
 					}
@@ -1306,7 +1306,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				} else {
 					// 没有设置可用性域，且设置了each，即在每个域创建each个实例。判断失败次数继续尝试。
 					failTimes++
-					if (retry < 0 || failTimes <= retry) && !SKIP_RETRY {
+					if (retry < 0 || failTimes < retry) && !SKIP_RETRY {
 						continue
 					}
 				}
@@ -1314,7 +1314,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			} else {
 				//设置了可用性域，判断是否需要重试
 				failTimes++
-				if (retry < 0 || failTimes <= retry) && !SKIP_RETRY {
+				if (retry < 0 || failTimes < retry) && !SKIP_RETRY {
 					continue
 				}
 			}
@@ -1339,10 +1339,10 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		// for 循环次数+1
 		pos++
 
-		if pos < sum && EACH {
+#		if pos < sum && EACH {
 			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 			sendMessage("", text)
-		}
+#		}
 	}
 	return
 }
