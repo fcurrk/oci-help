@@ -36,6 +36,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-	  git rev-list HEAD --abbrev-commit --max-count=1
           name: ${{ steps.Install dependencies.outputs.OCI_HELP_TAG }}
           path: oci-help/build
