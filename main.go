@@ -127,6 +127,7 @@ func main() {
 	helpers.FatalIfError(err)
 	defSec := cfg.Section(ini.DefaultSection)
 	proxy = defSec.Key("proxy").Value()
+	wx_web = defSec.Key("wx_web").Value()
 	token = defSec.Key("token").Value()
 	chat_id = defSec.Key("chat_id").Value()
 	if defSec.HasKey("EACH") {
@@ -135,8 +136,8 @@ func main() {
 		EACH = true
 	}
 	if token != "" && chat_id == "wx" {
-	sendMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
-	editMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
+	sendMessageUrl = wx_web
+	editMessageUrl = wx_web
 	} else {
 	sendMessageUrl = "https://api.telegram.org/bot" + token + "/sendMessage"
 	editMessageUrl = "https://api.telegram.org/bot" + token + "/editMessageText"
