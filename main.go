@@ -137,8 +137,8 @@ func main() {
 		EACH = true
 	}
 	if token != "" && chat_id == "wx" {
-	sendMessageUrl = wx_web
-	editMessageUrl = wx_web
+	sendMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
+	editMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
 	} else {
 	sendMessageUrl = "https://api.telegram.org/bot" + token + "/sendMessage"
 	editMessageUrl = "https://api.telegram.org/bot" + token + "/editMessageText"
