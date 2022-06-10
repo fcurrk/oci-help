@@ -35,5 +35,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: oci-help
+          name: oci-help-$(git rev-list HEAD --abbrev-commit --max-count=1)
           path: oci-help/build
