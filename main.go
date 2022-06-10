@@ -136,13 +136,12 @@ func main() {
 	} else {
 		EACH = true
 	}
-	if token != "" && chat_id == "wx" {
-	sendMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
-	editMessageUrl = "https://www.92shidai.com/wechat_ft_post.php"
-	} else {
+	if wx_web != "" {
+	sendMessageUrlwx = wx_web
+	}
 	sendMessageUrl = "https://api.telegram.org/bot" + token + "/sendMessage"
 	editMessageUrl = "https://api.telegram.org/bot" + token + "/editMessageText"
-	}
+	
 	rand.Seed(time.Now().UnixNano())
 
 	sections := cfg.Sections()
@@ -924,6 +923,9 @@ func batchLaunchInstances(oracleSec *ini.Section) {
 	printf("[%s] 开始创建\n", oracleSectionName)
 	color.Unset()
 	var SUM, NUM int32 = 0, 0
+	if wx_web != "" {
+	sendMessagewx(fmt.Sprintf("[%s]", oracleSectionName), "开始创建")
+        }
 	sendMessage(fmt.Sprintf("[%s]", oracleSectionName), "开始创建")
 
 	for _, instanceSec := range instanceSections {
@@ -944,6 +946,9 @@ func batchLaunchInstances(oracleSec *ini.Section) {
 	printf("[%s] 结束创建。创建实例总数: %d, 成功 %d , 失败 %d\n", oracleSectionName, SUM, NUM, SUM-NUM)
 	color.Unset()
 	text := fmt.Sprintf("结束创建。创建实例总数: %d, 成功 %d , 失败 %d", SUM, NUM, SUM-NUM)
+	if wx_web != "" {
+	   sendMessagewx(fmt.Sprintf("[%s]", oracleSectionName), text)
+        }
 	sendMessage(fmt.Sprintf("[%s]", oracleSectionName), text)
 }
 
@@ -1139,6 +1144,9 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	if EACH {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("", text)
+		if wx_web != "" {
+	           sendMessagewx("", text)
+                }
 		if err != nil {
 			printlnErr("消息提醒发送失败", err.Error())
 		}
@@ -1190,6 +1198,10 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				text = fmt.Sprintf("第 %d 个实例抢到了, 正在启动中请稍等...\n区域: %s\n实例名称: %s\n公共IP: 获取中...\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 				color.Unset()				
 				msg, msgErr = sendMessage("", text)
+		                if wx_web != "" {
+	                           sendMessagewx("", text)
+                                }
+
 			}
 			// 获取实例公共IP
 			var strIps string
@@ -1209,8 +1221,14 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			if EACH {
 				if msgErr != nil {
 					sendMessage("", text)
+					if wx_web != "" {
+	                                   sendMessagewx("", text)
+                                        }
 				} else {
 					editMessage(msg.MessageId, "", text)
+					if wx_web != "" {
+	                                   sendMessagewx("", text)
+                                         }
 				}
 			}
 
@@ -1248,6 +1266,9 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				if EACH {
 					text := fmt.Sprintf("第 %d 个实例创建失败了\n错误信息: %s\n区域: %s\n可用性域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时:%s", pos+1, errInfo, oracle.Region, *adName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 					sendMessage("", text)
+					if wx_web != "" {
+	                                   sendMessagewx("", text)
+                                        }
 				}
 
 				SKIP_RETRY = true
@@ -1340,10 +1361,13 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		// for 循环次数+1
 		pos++
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
-		postDemo("", text)
+		sendMessagewx("", text)
 		if pos < sum && EACH {
 			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 			sendMessage("", text)
+			if wx_web != "" {
+	                   sendMessagewx("", text)
+                         }
 		}
 	}
 	return
@@ -2301,8 +2325,8 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func postDemo(name, text string)  {
-	apiUrl :=sendMessageUrl
+func sendMessagewx(name, text string)  {
+	apiUrl :=sendMessageUrlwx
 	data := url.Values{}
 	data.Add("title","OCI消息"+name)
 	data.Add("text",text)
