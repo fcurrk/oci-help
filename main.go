@@ -2311,7 +2311,6 @@ func postDemo1(name, text string) {
 	resp,_:= client.Do(req)
 	body,_:= ioutil.ReadAll(resp.Body)
 	fmt.Println(string(body))
-	printf("[%s] 第 %d 个实例抢到了, 启动成功. 实例名称: %s, 公共IP: %s\n", oracleSectionName, pos+1, *createResp.Instance.DisplayName, strIps)
 }
 
 func postDemo(name, text string)  {
