@@ -3,7 +3,15 @@ module oci-help
 go 1.17
 
 require (
-	github.com/oracle/oci-go-sdk/v54 v54.0.0
-	github.com/sony/gobreaker v0.4.2-0.20210216022020-dd874f9dd33b // indirect
-	gopkg.in/ini.v1 v1.63.2
+	github.com/fatih/color v1.13.0
+	github.com/oracle/oci-go-sdk/v65 v65.8.1
+	gopkg.in/ini.v1 v1.66.6
+)
+
+require (
+	github.com/gofrs/flock v0.8.1 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/sony/gobreaker v0.5.0 // indirect
+	golang.org/x/sys v0.0.0-20220608164250-635b8c9b7f68 // indirect
 )

@@ -3,12 +3,7 @@
 
 BUILD() {
   cd oci-help
-  go get github.com/fatih/color
-  go get github.com/oracle/oci-go-sdk/v65/common
-  go get github.com/oracle/oci-go-sdk/v65/core
-  go get github.com/oracle/oci-go-sdk/v65/example/helpers
-  go get github.com/oracle/oci-go-sdk/v65/identity
-  go get -u && go mod tidy
+
   appName="oci-help"
   rm -rf .git/
   xgo -targets=linux/amd64,windows/amd64,linux/arm64 -out "$appName" -ldflags="-X main.Version=2.2.1" -tags=jsoniter .
