@@ -2300,18 +2300,11 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessage(name, text string) (msg Message, err error) {
 	if token != "" && chat_id != "" {
-	     if chat_id == "wx" {
-		data := url.Values{
-			"parse_mode": {"Markdown"},
-			"title":    {"*甲骨文通知*"},
-			"content":   {name + "\n" + text},
-		        }
-		} else {
-		        data = url.Values{
-			        "parse_mode": {"Markdown"},
-			        "chat_id":    {chat_id},
-			        "text":       {"*甲骨文通知* " + name + "\n" + text},
-		        }
+		data = url.Values{
+		       "parse_mode": {"Markdown"},
+		       "chat_id":    {chat_id},
+		       "title":      {"OCI操作消息"},
+		       "text":       {"*甲骨文通知* " + name + "\n" + text},
 		}
 		var req *http.Request
 		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
@@ -2345,19 +2338,12 @@ func sendMessage(name, text string) (msg Message, err error) {
 
 func editMessage(messageId int, name, text string) (msg Message, err error) {
 	if token != "" && chat_id != "" {
-	     if chat_id == "wx" {
 		data := url.Values{
-			"parse_mode": {"Markdown"},
-			"title":    {"*甲骨文通知*"},
-			"content":   {name + "\n" + text},
-		        }
-		} else {
-		        data = url.Values{
-			        "parse_mode": {"Markdown"},
-			        "chat_id":    {chat_id},
-			        "message_id": {strconv.Itoa(messageId)},
-			        "text":       {"*甲骨文通知* " + name + "\n" + text},
-		        }
+		       "parse_mode": {"Markdown"},
+		       "chat_id":    {chat_id},
+		       "title":      {"OCI操作消息"},
+		       "message_id": {strconv.Itoa(messageId)},
+		       "text":       {"*甲骨文通知* " + name + "\n" + text},
 		}
 		var req *http.Request
 		req, err = http.NewRequest(http.MethodPost, editMessageUrl, strings.NewReader(data.Encode()))
