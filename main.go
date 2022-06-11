@@ -2348,6 +2348,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
+	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
 	if err != nil {
 	printlnErr("2", err.Error())
 		return
