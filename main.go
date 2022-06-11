@@ -1151,6 +1151,10 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		if err != nil {
 			printlnErr("消息提醒发送失败", err.Error())
 		}
+		if err2 != nil {
+                        fmt.Sprintf("SUM %d  TEXT %s",err2,err2)
+			printlnErr("WX消息提醒发送失败", err2.Error())
+		}
 	}
 
 	for pos < sum {
