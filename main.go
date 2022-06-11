@@ -1148,8 +1148,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		if wx_web != "" {
 	        _, err2 := sendMessagewx("", text)
 			if err2 != nil {
-                           fmt.Sprintf("SUM %d  TEXT %s",err2,err2)
-			   printlnErr("WX消息提醒发送失败", err2.Error())
+			   printlnErr(err2, err2.Error())
 		        }
                 }
 		if err != nil {
