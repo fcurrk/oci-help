@@ -1147,7 +1147,6 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		_, err := sendMessage("", text)
 		if wx_web != "" {
 	        _, err = sendMessagewx("", text)
-		printf("测试发送[%s]",err)
                 }
 		if err != nil {
 			printlnErr("消息提醒发送失败", err.Error())
@@ -2338,14 +2337,24 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	req,_:= http.NewRequest("POST",u.String(),nil)
 	var resp *http.Response
 	resp, err = client.HTTPClient.Do(req)
-	defer resp.Body.Close()
 	if err != nil {
 		return
 	}
+	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(body, &msg)
+	if err != nil {
+		return
+	}
+
 	if !msg.OK {
 		err = errors.New(msg.Description)
 		return
 	}
+	defer resp.Body.Close()
 	return
 }
 
