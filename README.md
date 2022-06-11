@@ -35,10 +35,12 @@ retry为实例失败后重试次数，设置为-1为一直重试直到成功。
 ## Telegram 消息提醒配置
 ![image](https://github.com/fcurrk/oci-help/raw/main/doc/9.png)
 
-> BotFather: https://t.me/BotFather 
-> IDBot: https://t.me/myidbot
+> BotFather: https://t.me/BotFather
 
 先/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
+
+> IDBot: https://t.me/myidbot
+
 回复/getid 获得自己的数字id
 
 ## WX 消息提醒配置
