@@ -1,34 +1,42 @@
 # 甲骨文实例抢购教程
 
-## 获取程序
+## 
 - 如果需要在本地电脑运行该程序，根据自己电脑的CPU架构类型，打开下面的 `下载地址` 下载对应的文件即可。如果需要在服务器上运行该程序，那么根据服务器的CPU架构类型选择对应的文件下载到服务器即可。
 
 - 下载完成后解压压缩包，可以得到可执行程序 (Windows系统: `oci-help.exe` , 其他操作系统: `oci-help` ) 和 配置文件 `oci-help.ini` 。
 
-> 下载地址: https://github.com/lemoex/oci-help/releases/latest
+本脚本来源于https://github.com/lemoex/oci-help,感谢提供源代码
+
+
+> 下载地址: https://github.com/fcurrk/oci-help/releases/latest
 
 
 ## 获取配置信息
-![image](https://github.com/lemoex/oci-help/raw/main/doc/1.png)
-![image](https://github.com/lemoex/oci-help/raw/main/doc/2.png)
-![image](https://github.com/lemoex/oci-help/raw/main/doc/3.png)
-![image](https://github.com/lemoex/oci-help/raw/main/doc/4.png)
-![image](https://github.com/lemoex/oci-help/raw/main/doc/5.png)
-![image](https://github.com/lemoex/oci-help/raw/main/doc/6.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/1.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/2.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/3.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/4.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/5.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/6.png)
 
 
 ## 编辑配置文件
 用文本编辑器打开在第一步获取到的 `oci-help.ini` 文件，进行如下配置:
 
-![image](https://github.com/lemoex/oci-help/raw/main/doc/7.png)
-![image](https://github.com/lemoex/oci-help/raw/main/doc/8.png)
+![image](https://github.com/lfcurrk/oci-help/raw/main/doc/7.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/8.png)
 
 ## Telegram 消息提醒配置
-![image](https://github.com/lemoex/oci-help/raw/main/doc/9.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/9.png)
 
-> BotFather: https://t.me/BotFather    
+> BotFather: https://t.me/BotFather 
+先/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
 > IDBot: https://t.me/myidbot
+回复/getid 获得自己的数字id
 
+## WX 消息提醒配置
+配置文件设置好自己的微信推送消息POST服务地址即可，没有请保留为空。
+POST提交的信息需包含title,text两个数据。
 
 ## 运行程序
 ```bash
