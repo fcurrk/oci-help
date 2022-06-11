@@ -2358,11 +2358,6 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 		printlnErr("3", err.Error())
 		return
 	}
-	if !msg.OK {
-		err = errors.New(msg.Description)
-		printlnErr("4", err.Error())
-		return
-	}
 	defer resp.Body.Close()
 		printlnErr("5", err.Error())
 	return
