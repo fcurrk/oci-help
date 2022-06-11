@@ -2328,7 +2328,7 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func sendMessagewx(name, text string) (msg Message, err error) {
+func sendMessagewx(name, text string) {
 	apiUrl :=sendMessageUrlwx
 	data := url.Values{
 		"parse_mode": {"Markdown"},
@@ -2359,7 +2359,6 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 		return
 	}
 	defer resp.Body.Close()
-		printlnErr("5", err.Error())
 	return
 }
 
