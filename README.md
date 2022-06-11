@@ -37,11 +37,11 @@ retry为实例失败后重试次数，设置为-1为一直重试直到成功。
 
 > BotFather: https://t.me/BotFather
 
-先/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
+/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
 
 > IDBot: https://t.me/myidbot
 
-回复/getid 获得自己的数字id
+/getid 获得自己的数字id
 
 ## WX 消息提醒配置
 配置文件设置好自己的微信推送消息POST服务地址即可，没有请保留为空。
