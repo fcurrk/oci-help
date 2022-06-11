@@ -1148,7 +1148,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		if wx_web != "" {
 	        _, err2 := sendMessagewx("", text)
 			if err2 != nil {
-			   printlnErr("CW“, err2+err2.Error())
+			   printlnErr("CW", err2+err2.Error())
 		        }
                 }
 		if err != nil {
