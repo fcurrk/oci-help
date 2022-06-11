@@ -1146,7 +1146,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("", text)
 		if wx_web != "" {
-	        _, err = sendMessagewx("", text)
+	        _, err2 := sendMessagewx("", text)
                 }
 		if err != nil {
 			printlnErr("消息提醒发送失败", err.Error())
@@ -2327,9 +2327,11 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessagewx(name, text string) (msg Message, err error) {
 	apiUrl :=sendMessageUrlwx
-	data := url.Values{}
-	data.Add("title","*OCI操作消息*"+name)
-	data.Add("text",text)
+	data := url.Values{
+		"parse_mode": {"Markdown"},
+		"title":      {"*OCI操作消息*"+name},
+		"text":       {text},
+	}
 	u,_:= url.ParseRequestURI(apiUrl)
 	u.RawQuery = data.Encode()
 	client := common.BaseClient{HTTPClient: &http.Client{}}
@@ -2338,27 +2340,22 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	var resp *http.Response
 	resp, err = client.HTTPClient.Do(req)
 	if err != nil {
-	fmt.Print("error1")
 		return
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Print("error2")
 		return
 	}
 	err = json.Unmarshal(body, &msg)
 	if err != nil {
-		fmt.Print("error3")
 		return
 	}
 	if !msg.OK {
 		err = errors.New(msg.Description)
-			fmt.Print("error4")
 		return
 	}
 	defer resp.Body.Close()
-		fmt.Print("error5")
 	return
 }
 
