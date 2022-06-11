@@ -2342,11 +2342,6 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	if err != nil {
 		return
 	}
-	var body []byte
-	body, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
 	if !msg.OK {
 		err = errors.New(msg.Description)
 		return
