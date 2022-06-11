@@ -37,7 +37,7 @@ retry为实例失败后重试次数，设置为-1为一直重试直到成功。
 
 > BotFather: https://t.me/BotFather
 
-/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
+/newbot 创建机器人，按照提示为机器人设置名字，然后/token 提取token
 
 > IDBot: https://t.me/myidbot
 
