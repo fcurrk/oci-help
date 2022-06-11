@@ -2328,7 +2328,7 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 func sendMessagewx(name, text string) (msg Message, err error) {
 	apiUrl :=sendMessageUrlwx
 	data := url.Values{}
-	data.Add("title","OCI消息"+name)
+	data.Add("title","*OCI操作消息*"+name)
 	data.Add("text",text)
 	u,_:= url.ParseRequestURI(apiUrl)
 	u.RawQuery = data.Encode()
@@ -2338,23 +2338,27 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	var resp *http.Response
 	resp, err = client.HTTPClient.Do(req)
 	if err != nil {
+	fmt.Print("error1")
 		return
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Print("error2")
 		return
 	}
 	err = json.Unmarshal(body, &msg)
 	if err != nil {
+		fmt.Print("error3")
 		return
 	}
-
 	if !msg.OK {
 		err = errors.New(msg.Description)
+			fmt.Print("error4")
 		return
 	}
 	defer resp.Body.Close()
+		fmt.Print("error5")
 	return
 }
 
@@ -2363,8 +2367,7 @@ func sendMessage(name, text string) (msg Message, err error) {
 		data := url.Values{
 		       "parse_mode": {"Markdown"},
 		       "chat_id":    {chat_id},
-		       "title":      {"OCI操作消息"},
-		       "text":       {"*甲骨文通知* " + name + "\n" + text},
+		       "text":       {"*OCI操作消息* " + name + "\n" + text},
 		}
 		var req *http.Request
 		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
@@ -2401,9 +2404,8 @@ func editMessage(messageId int, name, text string) (msg Message, err error) {
 		data := url.Values{
 		       "parse_mode": {"Markdown"},
 		       "chat_id":    {chat_id},
-		       "title":      {"OCI操作消息"},
 		       "message_id": {strconv.Itoa(messageId)},
-		       "text":       {"*甲骨文通知* " + name + "\n" + text},
+		       "text":       {"*OCI操作消息* " + name + "\n" + text},
 		}
 		var req *http.Request
 		req, err = http.NewRequest(http.MethodPost, editMessageUrl, strings.NewReader(data.Encode()))
