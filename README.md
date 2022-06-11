@@ -1,11 +1,12 @@
 # 甲骨文实例抢购教程
 
+本脚本来源于 https://github.com/lemoex/oci-help
+感谢分享源码.
+
 ## 
 - 如果需要在本地电脑运行该程序，根据自己电脑的CPU架构类型，打开下面的 `下载地址` 下载对应的文件即可。如果需要在服务器上运行该程序，那么根据服务器的CPU架构类型选择对应的文件下载到服务器即可。
 
 - 下载完成后解压压缩包，可以得到可执行程序 (Windows系统: `oci-help.exe` , 其他操作系统: `oci-help` ) 和 配置文件 `oci-help.ini` 。
-
-本脚本来源于https://github.com/lemoex/oci-help,感谢提供源代码
 
 
 > 下载地址: https://github.com/fcurrk/oci-help/releases/latest
