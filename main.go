@@ -1145,7 +1145,10 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	if EACH {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("", text)
-
+		if wx_web != "" {
+	        _, err = sendMessagewx("", text)
+		printf("测试发送[%s]",err)
+                }
 		if err != nil {
 			printlnErr("消息提醒发送失败", err.Error())
 		}
@@ -2323,19 +2326,29 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func sendMessagewx(name, text string)  {
+func sendMessagewx(name, text string) (msg Message, err error) {
 	apiUrl :=sendMessageUrlwx
 	data := url.Values{}
 	data.Add("title","OCI消息"+name)
 	data.Add("text",text)
 	u,_:= url.ParseRequestURI(apiUrl)
 	u.RawQuery = data.Encode()
-	client := &http.Client{}
+	client := common.BaseClient{HTTPClient: &http.Client{}}
+	setProxyOrNot(&client)
 	req,_:= http.NewRequest("POST",u.String(),nil)
-	resp,_ := client.Do(req)
+	resp, err = client.HTTPClient.Do(req)
 	defer resp.Body.Close()
-//body,_:= ioutil.ReadAll(resp.Body)
-//fmt.Println(string(body))
+	if err != nil {
+		return
+	}
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	if !msg.OK {
+		err = errors.New(msg.Description)
+		return
+	}
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
