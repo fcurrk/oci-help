@@ -24,15 +24,21 @@
 ## 编辑配置文件
 用文本编辑器打开在第一步获取到的 `oci-help.ini` 文件，进行如下配置:
 
-![image](https://github.com/lfcurrk/oci-help/raw/main/doc/7.png)
+![image](https://github.com/fcurrk/oci-help/raw/main/doc/7.png)
 ![image](https://github.com/fcurrk/oci-help/raw/main/doc/8.png)
+
+availabilityDomain可用域名称可为空，怕麻烦的可以不填.
+
+retry为实例失败后重试次数，设置为-1为一直重试直到成功。
+
 
 ## Telegram 消息提醒配置
 ![image](https://github.com/fcurrk/oci-help/raw/main/doc/9.png)
 
 > BotFather: https://t.me/BotFather 
-先/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
 > IDBot: https://t.me/myidbot
+
+先/newbot 创建机器人，按照提示取好机器人的名字，然后/token 提取token
 回复/getid 获得自己的数字id
 
 ## WX 消息提醒配置
