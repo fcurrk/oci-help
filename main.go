@@ -1148,7 +1148,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		if wx_web != "" {
 	        _, err2 := sendMessagewx("", text)
 			if err2 != nil {
-			   printlnErr(err2, err2.Error())
+			   printlnErr("CW“, err2+err2.Error())
 		        }
                 }
 		if err != nil {
@@ -2343,27 +2343,27 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	var resp *http.Response
 	resp, err = client.HTTPClient.Do(req)
 	if err != nil {
-		printlnErr(err, "1"+err.Error())
+		printlnErr("1", err+err.Error())
 		return
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-	printlnErr(err, "2"+err.Error())
+	printlnErr("2", err+err.Error())
 		return
 	}
 	err = json.Unmarshal(body, &msg)
 	if err != nil {
-		printlnErr(err, "3"+err.Error())
+		printlnErr("3", err+err.Error())
 		return
 	}
 	if !msg.OK {
 		err = errors.New(msg.Description)
-			printlnErr(err, "4"+err.Error())
+		printlnErr("4", err+err.Error())
 		return
 	}
 	defer resp.Body.Close()
-		printlnErr(err, "5"+err.Error())
+		printlnErr("5", err+err.Error())
 	return
 }
 
