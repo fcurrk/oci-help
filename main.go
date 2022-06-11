@@ -2336,11 +2336,13 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	client := common.BaseClient{HTTPClient: &http.Client{}}
 	setProxyOrNot(&client)
 	req,_:= http.NewRequest("POST",u.String(),nil)
+	var resp *http.Response
 	resp, err = client.HTTPClient.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
 		return
 	}
+	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
@@ -2349,6 +2351,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 		err = errors.New(msg.Description)
 		return
 	}
+	return
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
