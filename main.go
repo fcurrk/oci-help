@@ -2360,7 +2360,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	}
 	if !msg.OK {
 		err = errors.New(msg.Description)
-		printlnErr("4", err)
+		printlnErr("4", msg)
 		return
 	}
 	defer resp.Body.Close()
