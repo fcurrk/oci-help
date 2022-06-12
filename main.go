@@ -1231,7 +1231,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				} else {
 					editMessage(msg.MessageId, "", text)
 					if wx_web != "" {
-	                                   sendMessagewx(msg.MessageId, text)
+	                                   sendMessagewx(strconv.Itoa(msg.MessageId), text)
                                          }
 				}
 			}
