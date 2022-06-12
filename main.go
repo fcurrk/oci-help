@@ -1356,7 +1356,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		}
 
                 if runTimes == retry {
-			text := fmt.Sprintf("尝试创建第 %d 个实例任务完成...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n执行次数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum , runTimes)
+			text := fmt.Sprintf("尝试创建第 %d 个实例任务完成...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n执行次数: %d"\n成功个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum , runTimes , num)
 			sendMessage("", text)
 			if wx_web != "" {
 	                   sendMessagewx("", text)
