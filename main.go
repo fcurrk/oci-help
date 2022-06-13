@@ -2222,7 +2222,7 @@ func getInstancePublicIps(instanceId *string) (ips []string, err error) {
 	// 多次尝试，避免刚抢购到实例，实例正在预配获取不到公共IP。
 	var ins core.Instance
 	for i := 0; i < 100; i++ {
-		fmt.Println(i, ins.LifecycleState)
+//		fmt.Println(i, ins.LifecycleState)
 		if ins.LifecycleState != core.InstanceLifecycleStateRunning {
 			ins, err = getInstance(instanceId)
 //			fmt.Println("instance:", ins.LifecycleState, err)
@@ -2240,19 +2240,19 @@ func getInstancePublicIps(instanceId *string) (ips []string, err error) {
 
 		var vnicAttachments []core.VnicAttachment
 		vnicAttachments, err = ListVnicAttachments(ctx, computeClient, instanceId)
-		fmt.Println(vnicAttachments, err)
+//		fmt.Println(vnicAttachments, err)
 		if err != nil {
 			continue
 		}
 		if len(vnicAttachments) > 0 {
 			for _, vnicAttachment := range vnicAttachments {
-				fmt.Println("vnicAttachment:", vnicAttachment.LifecycleState)
+//				fmt.Println("vnicAttachment:", vnicAttachment.LifecycleState)
 				vnic, vnicErr := GetVnic(ctx, networkClient, vnicAttachment.VnicId)
 				if vnicErr != nil {
 					printf("GetVnic error: %s\n", vnicErr.Error())
 					continue
 				}
-				fmt.Println("vnic:", vnic.LifecycleState)
+//				fmt.Println("vnic:", vnic.LifecycleState)
 				if vnic.PublicIp != nil && *vnic.PublicIp != "" {
 					ips = append(ips, *vnic.PublicIp)
 				}
