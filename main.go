@@ -2225,7 +2225,7 @@ func getInstancePublicIps(instanceId *string) (ips []string, err error) {
 		fmt.Println(i, ins.LifecycleState)
 		if ins.LifecycleState != core.InstanceLifecycleStateRunning {
 			ins, err = getInstance(instanceId)
-			fmt.Println("instance:", ins.LifecycleState, err)
+//			fmt.Println("instance:", ins.LifecycleState, err)
 			if err != nil {
 				continue
 			}
