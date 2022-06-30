@@ -3,16 +3,11 @@
 
 BUILD() {
   cd oci-help
-	  go get github.com/oracle/oci-go-sdk/v65/common
-          go get github.com/oracle/oci-go-sdk/v65/core
-          go get github.com/oracle/oci-go-sdk/v65/example/helpers
-          go get github.com/oracle/oci-go-sdk/v65/identity
   appName="oci-help"
   rm -rf .git/
-  xgo -targets=linux/amd64,windows/amd64,linux/arm64 -out "$appName" -ldflags="-X main.Version=3.2.0" -tags=jsoniter .
+  xgo -targets=linux/amd64,windows/amd64,linux/arm64 -out "$appName" -ldflags="-X main.Version=3.3.0" -tags=jsoniter .
   mkdir -p "build"
   mv oci-help* build
-  mv go* build
 
   cd build
   upx -9 ./oci-help-linux*
