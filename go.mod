@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/fatih/color v1.13.0
-	github.com/oracle/oci-go-sdk/v65 v65.8.1
+	github.com/oracle/oci-go-sdk/v65 v65.11.0
 	gopkg.in/ini.v1 v1.66.6
 )
 
