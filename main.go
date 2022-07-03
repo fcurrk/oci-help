@@ -43,7 +43,6 @@ import (
 	"sync"
 	"text/tabwriter"
 	"time"
-	"unsafe"
 
 	"github.com/oracle/oci-go-sdk/v65/common"
 	"github.com/oracle/oci-go-sdk/v65/core"
@@ -2356,6 +2355,43 @@ func sendMessagewx(name, text string) (msg Message, err error) {
     fmt.Println(string(b))
     defer resp.Body.Close()
     return
+}
+
+func sendMessage(name, text string) (msg Message, err error) {
+	if token != "" && chat_id != "" {
+		data := url.Values{
+		       "parse_mode": {"Markdown"},
+		       "chat_id":    {chat_id},
+		       "text":       {"*OCI操作消息* " + name + "\n" + text},
+		}
+		var req *http.Request
+		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
+		if err != nil {
+			return
+		}
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		client := common.BaseClient{HTTPClient: &http.Client{}}
+		setProxyOrNot(&client)
+		var resp *http.Response
+		resp, err = client.HTTPClient.Do(req)
+		if err != nil {
+			return
+		}
+		var body []byte
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
+		err = json.Unmarshal(body, &msg)
+		if err != nil {
+			return
+		}
+		if !msg.OK {
+			err = errors.New(msg.Description)
+			return
+		}
+	}
+	return
 }
 
 func editMessage(messageId int, name, text string) (msg Message, err error) {
