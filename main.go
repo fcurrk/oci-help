@@ -43,6 +43,7 @@ import (
 	"sync"
 	"text/tabwriter"
 	"time"
+	"unsafe"
 
 	"github.com/oracle/oci-go-sdk/v65/common"
 	"github.com/oracle/oci-go-sdk/v65/core"
@@ -2359,6 +2360,15 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	   return
 	}
 	defer res.Body.Close()
+		content, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("2Fatal error ", err.Error())
+	        return
+	}
+ 
+	//fmt.Println(string(content))
+	str := (*string)(unsafe.Pointer(&content)) //转化为string,优化内存
+	fmt.Println(*str)
 	return
 }
 
