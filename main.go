@@ -1122,6 +1122,8 @@ sudo systemctl restart sshd`
               passwd_e := passwd_a + passwd_b + passwd_c
 	      passwd_msg := []byte(passwd_e)
 	      passwd_encoded := base64.StdEncoding.EncodeToString(passwd_msg)
+	      fmt.Println(passwd_e)
+	      fmt.Println(passwd_encoded)
 	      metaData["user_data"] = passwd_encoded
 	} else if (instance.CloudInit != "") {
 		metaData["user_data"] = instance.CloudInit
