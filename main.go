@@ -2355,7 +2355,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 		"text":       {text},
 	}
 	bytesData, _ := json.Marshal(data)
-        res, err := http.Post(sendMessageUrlwx,
+        res, err := http.Post(apiUrl,
 		"application/json;charset=utf-8", bytes.NewBuffer([]byte(bytesData)))
 	if err != nil {
 		fmt.Println("Fatal error ", err.Error())
@@ -2367,11 +2367,6 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	if err != nil {
 		fmt.Println("Fatal error ", err.Error())
 	}
- 
-	//fmt.Println(string(content))
-	str := (*string)(unsafe.Pointer(&content)) //转化为string,优化内存
-	fmt.Println(*str)
-
 	return
 }
 
