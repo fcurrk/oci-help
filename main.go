@@ -2349,21 +2349,16 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessagewx(name, text string) (msg Message, err error) {
 	apiUrl :=sendMessageUrlwx
-	data := url.Values{
-		"parse_mode": {"Markdown"},
-		"title":      {"*OCI操作消息*"+name},
-		"text":       {text},
-	}
+	data := make(map[string]string)
+	data["title"] = "*OCI操作消息*"+name
+	data["text"] = text
 	bytesData, _ := json.Marshal(data)
-        res, err := http.Post(apiUrl,
-		"application/json;charset=utf-8", bytes.NewBuffer([]byte(bytesData)))
+        res, err := http.Post(apiUrl, "application/json;charset=utf-8", bytes.NewBuffer([]byte(bytesData)))
 	if err != nil {
 		fmt.Println("Fatal error ", err.Error())
+	   return
 	}
- 
 	defer res.Body.Close()
- 
-
 	return
 }
 
