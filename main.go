@@ -2363,10 +2363,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
  
 	defer res.Body.Close()
  
-	content, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println("Fatal error ", err.Error())
-	}
+
 	return
 }
 
