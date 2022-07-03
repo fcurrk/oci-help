@@ -1115,11 +1115,11 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	if instance.PASSWORD != "" {
 	       passwd_d := instance.PASSWORD
 	       passwd_a := "#!/bin/bash\n"
-	       passwd_b := "echo root:" + passwd_d + " |sudo chpasswd root \n"
-	       passwd_c := `sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config;
-sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config;
-sudo systemctl restart sshd`
-              passwd_e := passwd_a + passwd_b + passwd_c
+	       passwd_b := "echo root:" + passwd_d + " |sudo chpasswd root\n"
+	       passwd_c := "sudo sed -i 's/^#\\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config;\n"
+               passwd_c1 := "sudo sed -i 's/^#\\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config;\n"
+               passwd_c2 := "sudo systemctl restart sshd\n"
+              passwd_e := passwd_a + passwd_b + passwd_c + passwd_c1 + passwd_c2
 	      passwd_msg := []byte(passwd_e)
 	      passwd_encoded := base64.StdEncoding.EncodeToString(passwd_msg)
 	      fmt.Println(passwd_e)
