@@ -2362,21 +2362,16 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	var resp *http.Response
 	resp, err = client.HTTPClient.Do(req)
 	if err != nil {
-fmt.Printf("1")
 		return
 	}
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
 	if err != nil {
-	fmt.Printf("2")
 		return
 	}
 	err = json.Unmarshal(body, &msg)
-	if err != nil {
-	fmt.Printf("3")
-		return
-	}
+
 	if !msg.OK {
 	fmt.Printf("4")
 		err = errors.New(msg.Description)
