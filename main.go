@@ -2354,34 +2354,24 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 		"title":      {"*OCI操作消息*"+name},
 		"text":       {text},
 	}
-	u,_:= url.ParseRequestURI(apiUrl)
-	u.RawQuery = data.Encode()
-	client := common.BaseClient{HTTPClient: &http.Client{}}
-	setProxyOrNot(&client)
-	req,_:= http.NewRequest("POST",u.String(),nil)
-	var resp *http.Response
-	resp, err = client.HTTPClient.Do(req)
+	bytesData, _ := json.Marshal(data)
+        res, err := http.Post(sendMessageUrlwx,
+		"application/json;charset=utf-8", bytes.NewBuffer([]byte(bytesData)))
 	if err != nil {
-		return
+		fmt.Println("Fatal error ", err.Error())
 	}
-	var body []byte
-	body, err = ioutil.ReadAll(resp.Body)
-	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
-		fmt.Printf(body)
+ 
+	defer res.Body.Close()
+ 
+	content, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return
+		fmt.Println("Fatal error ", err.Error())
 	}
-	err = json.Unmarshal(body, &msg)
-			fmt.Printf(err)
-	if err != nil {
-		return
-	}
-	if !msg.OK {
-	fmt.Printf("4")
-		err = errors.New(msg.Description)
-		return
-	}
-	defer resp.Body.Close()
+ 
+	//fmt.Println(string(content))
+	str := (*string)(unsafe.Pointer(&content)) //转化为string,优化内存
+	fmt.Println(*str)
+
 	return
 }
 
