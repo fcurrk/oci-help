@@ -1119,7 +1119,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	       passwd_c := `sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config;
 sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config;
 sudo systemctl restart sshd`
-              passwd_e = passwd_a + passwd_b + passwd_c
+              passwd_e := passwd_a + passwd_b + passwd_c
 	      passwd_msg := []byte(passwd_e)
 	      passwd_encoded := base64.StdEncoding.EncodeToString(passwd_msg)
 	      metaData["user_data"] = passwd_encoded
