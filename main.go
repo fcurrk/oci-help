@@ -2367,16 +2367,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
 	var body []byte
 	body, err = ioutil.ReadAll(resp.Body)
 	body = bytes.TrimPrefix(body, []byte("\xef\xbb\xbf"))
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(body, &msg)
 
-	if !msg.OK {
-	fmt.Printf("4")
-		err = errors.New(msg.Description)
-		return
-	}
 	defer resp.Body.Close()
 	return
 }
