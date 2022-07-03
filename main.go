@@ -2350,86 +2350,12 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessagewx(name, text string) (msg Message, err error) {
         apiUrl :=sendMessageUrlwx
-	data := make(map[string]string)    
-	data["title"] = "*OCI操作消息*"+name
-	data["text"] = text
- 
-	bytesData, err := json.Marshal(data)
-
-        if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println(bytesData)
- 
-	reader := bytes.NewReader(bytesData)
-	
-        request, err := http.NewRequest("POST", apiUrl, reader)
-	defer request.Body.Close()    //程序在使用完回复后必须关闭回复的主体
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	request.Header.Set("Content-Type", "application/json;charset=UTF-8")   
-	//必须设定该参数,POST参数才能正常提交，意思是以json串提交数据
-	
-	client := http.Client{}
-	resp, err := client.Do(request) //Do 方法发送请求，返回 HTTP 回复
-	if err != nil {
-		fmt.Println("22222", err.Error())
-		return
-	}
- 
-	respBytes, err := ioutil.ReadAll(resp.Body)   
-	if err != nil {
-		fmt.Println("33333", err.Error())
-		return
-	}
- 
-	//byte数组直接转成string，优化内存
-	str := (*string)(unsafe.Pointer(&respBytes))
-	fmt.Println("44444", *str)
- 
-	//fmt.Println(string(respBytes))
-	return
-
-}
-
-func sendMessage(name, text string) (msg Message, err error) {
-	if token != "" && chat_id != "" {
-		data := url.Values{
-		       "parse_mode": {"Markdown"},
-		       "chat_id":    {chat_id},
-		       "text":       {"*OCI操作消息* " + name + "\n" + text},
-		}
-		var req *http.Request
-		req, err = http.NewRequest(http.MethodPost, sendMessageUrl, strings.NewReader(data.Encode()))
-		if err != nil {
-			return
-		}
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		client := common.BaseClient{HTTPClient: &http.Client{}}
-		setProxyOrNot(&client)
-		var resp *http.Response
-		resp, err = client.HTTPClient.Do(req)
-		if err != nil {
-			return
-		}
-		var body []byte
-		body, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return
-		}
-		err = json.Unmarshal(body, &msg)
-		if err != nil {
-			return
-		}
-		if !msg.OK {
-			err = errors.New(msg.Description)
-			return
-		}
-	}
-	return
+    body := `{"title":"*OCI操作消息*"+name,"text":text}`
+    resp,_ := http.Post(apiUrl,"application/json",strings.NewReader(body))
+    b, _ := ioutil.ReadAll(resp.Body)
+    fmt.Println(string(b))
+    defer resp.Body.Close()
+    return
 }
 
 func editMessage(messageId int, name, text string) (msg Message, err error) {
