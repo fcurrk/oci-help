@@ -2349,27 +2349,50 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 }
 
 func sendMessagewx(name, text string) (msg Message, err error) {
-	apiUrl :=sendMessageUrlwx
-	data := make(map[string]string)
+        apiUrl :=sendMessageUrlwx
+	data := make(map[string]string)    
 	data["title"] = "*OCI操作消息*"+name
 	data["text"] = text
-	bytesData, _ := json.Marshal(data)
-        res, err := http.Post(apiUrl, "application/json;charset=utf-8", bytes.NewBuffer([]byte(bytesData)))
-	if err != nil {
-		fmt.Println("Fatal error ", err.Error())
-	   return
+ 
+	bytesData, err := json.Marshal(data)
+
+        if err != nil {
+		fmt.Println(err.Error())
+		return
 	}
-	defer res.Body.Close()
-		content, err := ioutil.ReadAll(res.Body)
+	fmt.Println(bytesData)
+ 
+	reader := bytes.NewReader(bytesData)
+	
+        request, err := http.NewRequest("POST", apiUrl, reader)
+	defer request.Body.Close()    //程序在使用完回复后必须关闭回复的主体
 	if err != nil {
-		fmt.Println("2Fatal error ", err.Error())
-	        return
+		fmt.Println(err.Error())
+		return
+	}
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")   
+	//必须设定该参数,POST参数才能正常提交，意思是以json串提交数据
+	
+	client := http.Client{}
+	resp, err := client.Do(request) //Do 方法发送请求，返回 HTTP 回复
+	if err != nil {
+		fmt.Println("22222", err.Error())
+		return
 	}
  
-	//fmt.Println(string(content))
-	str := (*string)(unsafe.Pointer(&content)) //转化为string,优化内存
-	fmt.Println(*str)
+	respBytes, err := ioutil.ReadAll(resp.Body)   
+	if err != nil {
+		fmt.Println("33333", err.Error())
+		return
+	}
+ 
+	//byte数组直接转成string，优化内存
+	str := (*string)(unsafe.Pointer(&respBytes))
+	fmt.Println("44444", *str)
+ 
+	//fmt.Println(string(respBytes))
 	return
+
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
