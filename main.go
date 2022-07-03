@@ -1122,14 +1122,11 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
               passwd_e := passwd_a + passwd_b + passwd_c + passwd_c1 + passwd_c2
 	      passwd_msg := []byte(passwd_e)
 	      passwd_encoded := base64.StdEncoding.EncodeToString(passwd_msg)
-	      fmt.Println(passwd_e)
-	      fmt.Println(passwd_encoded)
 	      metaData["user_data"] = passwd_encoded
 	} else if (instance.CloudInit != "") {
 		metaData["user_data"] = instance.CloudInit
-		request.Metadata = metaData
 	}
-
+		request.Metadata = metaData
 	minTime := instance.MinTime
 	maxTime := instance.MaxTime
 
