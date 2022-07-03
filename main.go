@@ -28,6 +28,7 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
+        "encoding/base64"
 	"fmt"
 	"github.com/fatih/color"
 	"io"
@@ -106,6 +107,7 @@ type Instance struct {
 	Each                   int32   `ini:"each"`
 	Retry                  int32   `ini:"retry"`
 	CloudInit              string  `ini:"cloud-init"`
+	PASSWORD               string  `ini:"password"`
 	MinTime                int32   `ini:"minTime"`
 	MaxTime                int32   `ini:"maxTime"`
 }
@@ -1110,10 +1112,21 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 
 	metaData := map[string]string{}
 	metaData["ssh_authorized_keys"] = instance.SSH_Public_Key
-	if instance.CloudInit != "" {
+	if instance.PASSWORD != "" {
+	       passwd_d := instance.PASSWORD
+	       passwd_a := "#!/bin/bash\n"
+	       passwd_b := "echo root:" + d + " |sudo chpasswd root \n"
+	       passwd_c := `sudo sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config;
+sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config;
+sudo systemctl restart sshd`
+              passwd_e = passwd_a + passwd_b + passwd_c
+	      passwd_msg := []byte(passwd_e)
+	      passwd_encoded := base64.StdEncoding.EncodeToString(passwd_msg)
+	      metaData["user_data"] = passwd_encoded
+	else if (instance.CloudInit != "") {
 		metaData["user_data"] = instance.CloudInit
+		request.Metadata = metaData
 	}
-	request.Metadata = metaData
 
 	minTime := instance.MinTime
 	maxTime := instance.MaxTime
