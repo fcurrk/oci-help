@@ -2378,8 +2378,7 @@ func sendMessagewx(title string, content string) (int, error)  {
              result := response.StatusCode
              return result, err
           } else {
-             result := 400
-             return result
+             return
           }
 }
 
