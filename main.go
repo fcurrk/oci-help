@@ -2378,7 +2378,8 @@ func sendMessagewx(title string, content string) (int, error)  {
              return result, err
           } else {
 	  result := 200
-	  return result, err
+	  err := "设置错误"
+	  return result , err
 	  }
 }
 
