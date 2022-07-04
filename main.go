@@ -142,15 +142,6 @@ func main() {
 		EACH = true
 	}
 
-	switch wx_web {
-	case "server":
-		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
-	case "pushplus":
-		sendMessageUrlwx = "http://www.pushplus.plus/send"
-	default:
-		sendMessageUrlwx = ""
-	}
-
 	sendMessageUrl = "https://api.telegram.org/bot" + token + "/sendMessage"
 	editMessageUrl = "https://api.telegram.org/bot" + token + "/editMessageText"
 	
@@ -2357,19 +2348,25 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 }
 
 func sendMessagewx(title string, content string) (int, error)  {
-        apiUrl :=sendMessageUrlwx
+
+	switch wx_web {
+	case "server":
+		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
+	case "pushplus":
+		sendMessageUrlwx = "http://www.pushplus.plus/send"
+	default:
+		sendMessageUrlwx = ""
+	}
+
         data := url.Values{}
 	data.Add("template", "json")
-	if wx_web == "server" {
-	data.Add("key", wx_token)
-	}
 	if wx_web == "pushplus" {
 	data.Add("token", wx_token)
 	}
 	data.Add("title", title)
 	data.Add("content", "*OCI操作消息* "+content+"\n")
 
-	response, err := http.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 	
         if err != nil {
            panic(err)
