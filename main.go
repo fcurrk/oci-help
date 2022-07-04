@@ -2353,13 +2353,12 @@ func sendMessagewx(name, text string) (msg Message, err error) {
         response, err := http.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(body))
 
         if err != nil {
-	   fmt.Println(err)
-	   return
+           panic(err)
         }
         defer response.Body.Close()
         // 返回请求状态码或者错误信息
         result := response.StatusCode
-        return
+        return result, err
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
