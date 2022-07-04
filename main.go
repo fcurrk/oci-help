@@ -2359,7 +2359,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
         defer response.Body.Close()
         // 返回请求状态码或者错误信息
         result := response.StatusCode
-        return result, err
+        return
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
