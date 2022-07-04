@@ -2357,24 +2357,30 @@ func sendMessagewx(title string, content string) (int, error)  {
 	default:
 		sendMessageUrlwx = ""
 	}
+	fmt.Println("/s",sendMessageUrlwx)
+        if sendMessageUrlwx != "" {
+             data := url.Values{}
+             data.Add("template", "json")
+             if wx_web == "pushplus" {
+                 data.Add("token", wx_token)
+             }
+	     data.Add("title", title)
+	     data.Add("content", "*OCI操作消息* "+content+"\n")
 
-        data := url.Values{}
-	data.Add("template", "json")
-	if wx_web == "pushplus" {
-	data.Add("token", wx_token)
-	}
-	data.Add("title", title)
-	data.Add("content", "*OCI操作消息* "+content+"\n")
-
-	response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	     response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 	
-        if err != nil {
-           panic(err)
-        }
-        defer response.Body.Close()
-        // 返回请求状态码或者错误信息
-        result := response.StatusCode
-        return result, err
+             if err != nil {
+                panic(err)
+             }
+	     fmt.Printf("%s\n", strings.NewReader(data.Encode()))
+             defer response.Body.Close()
+             // 返回请求状态码或者错误信息
+             result := response.StatusCode
+             return result, err
+          } else {
+             result := 400
+             return result
+          }
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
