@@ -1167,9 +1167,9 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("", text)
 		if wx_web != "" {
-	        _, err2 := sendMessagewx("", text)
-			if err2 != 200 {
-			   printlnErr("WX消息提醒发送失败", err2.Error())
+	        res, _ := sendMessagewx("", text)
+			if res != 200 {
+			   fmt.Println("WX消息提醒发送失败...")
 		        }
                 }
 		if err != nil {
@@ -2369,7 +2369,7 @@ func sendMessagewx(title string, content string) (int, error)  {
 	data.Add("title", title)
 	data.Add("content", "*OCI操作消息* "+content+"\n")
 
-	response, err := http.Post(urlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	response, err := http.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 	
         if err != nil {
            panic(err)
