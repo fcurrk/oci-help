@@ -2360,10 +2360,10 @@ func sendMessagewx(title string, content string, key string) (int, error)  {
         apiUrl :=sendMessageUrlwx
         data := url.Values{}
 	data.Add("template", "json")
-	if wx_web = "server" {
+	if wx_web == "server" {
 	data.Add("key", wx_token)
 	}
-	if wx_web = "pushplus" {
+	if wx_web == "pushplus" {
 	data.Add("token", wx_token)
 	}
 	data.Add("title", title)
