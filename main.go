@@ -2377,9 +2377,7 @@ func sendMessagewx(title string, content string) (int, error)  {
              // 返回请求状态码或者错误信息
              result := response.StatusCode
              return result, err
-          } else {
-             return
-          }
+          } 
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
