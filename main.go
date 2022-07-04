@@ -2356,7 +2356,7 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func sendMessagewx(title string, content string, key string) (int, error)  {
+func sendMessagewx(title string, content string) (int, error)  {
         apiUrl :=sendMessageUrlwx
         data := url.Values{}
 	data.Add("template", "json")
