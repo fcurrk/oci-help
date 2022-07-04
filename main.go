@@ -1215,7 +1215,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				color.Unset()				
 				msg, msgErr = sendMessage("", text)
 		                if wx_web != "" {
-	                        msg, msgErr = sendMessagewx("", text)
+	                        sendMessagewx("", text)
                                 }
 
 			}
