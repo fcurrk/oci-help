@@ -71,7 +71,7 @@ var (
 	instanceBaseSection *ini.Section
 	instance            Instance
 	proxy               string
-	wx_web              int
+	wx_web              string
 	wx_token            string
 	token               string
 	chat_id             string
@@ -141,14 +141,11 @@ func main() {
 	} else {
 		EACH = true
 	}
-	if wx_web != "" {
-	sendMessageUrlwx = wx_web
-	}
 
 	switch wx_web {
-	case 1:
+	case "server":
 		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
-	case 2:
+	case "pushplus":
 		sendMessageUrlwx = "http://www.pushplus.plus/send"
 	default:
 		sendMessageUrlwx = ""
@@ -2363,10 +2360,10 @@ func sendMessagewx(title string, content string, key string) (int, error)  {
         apiUrl :=sendMessageUrlwx
         data := url.Values{}
 	data.Add("template", "json")
-	if wx_web == 1 {
+	if wx_web = "server" {
 	data.Add("key", wx_token)
 	}
-	if wx_web == 2 {
+	if wx_web = "pushplus" {
 	data.Add("token", wx_token)
 	}
 	data.Add("title", title)
