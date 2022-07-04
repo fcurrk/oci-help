@@ -2348,7 +2348,6 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 }
 
 func sendMessagewx(title string, content string) (int, error)  {
-
 	switch wx_web {
 	case "server":
 		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
@@ -2377,7 +2376,10 @@ func sendMessagewx(title string, content string) (int, error)  {
              // 返回请求状态码或者错误信息
              result := response.StatusCode
              return result, err
-          } 
+          } else {
+	  result := 200
+	  return result
+	  }
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
