@@ -2347,7 +2347,7 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func sendMessagewx(name, text string) (msg Message, err error) {
+func sendMessagewx(name, text string) (int, error) {
         apiUrl :=sendMessageUrlwx
         body := `{"title":"*OCI操作消息*"+name,"text":text}`
         response, err := http.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(body))
@@ -2358,7 +2358,7 @@ func sendMessagewx(name, text string) (msg Message, err error) {
         defer response.Body.Close()
         // 返回请求状态码或者错误信息
         result := response.StatusCode
-        return result.(int), err
+        return result, err
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
