@@ -72,6 +72,7 @@ var (
 	instance            Instance
 	proxy               string
 	wx_web              string
+	wx_token            string
 	token               string
 	chat_id             string
 	sendMessageUrl      string
@@ -132,6 +133,7 @@ func main() {
 	defSec := cfg.Section(ini.DefaultSection)
 	proxy = defSec.Key("proxy").Value()
 	wx_web = defSec.Key("wx_web").Value()
+	wx_token = defSec.Key("wx_token").Value()
 	token = defSec.Key("token").Value()
 	chat_id = defSec.Key("chat_id").Value()
 	if defSec.HasKey("EACH") {
@@ -142,6 +144,16 @@ func main() {
 	if wx_web != "" {
 	sendMessageUrlwx = wx_web
 	}
+
+	switch wx_web {
+	case 1:
+		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
+	case 2:
+		sendMessageUrlwx = "http://www.pushplus.plus/send"
+	default:
+		sendMessageUrlwx = ""
+	}
+
 	sendMessageUrl = "https://api.telegram.org/bot" + token + "/sendMessage"
 	editMessageUrl = "https://api.telegram.org/bot" + token + "/editMessageText"
 	
@@ -1159,7 +1171,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		_, err := sendMessage("", text)
 		if wx_web != "" {
 	        _, err2 := sendMessagewx("", text)
-			if err2 != nil && err2.Error()!="" {
+			if err2 != 200 {
 			   printlnErr("WX消息提醒发送失败", err2.Error())
 		        }
                 }
@@ -2347,11 +2359,21 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 	return resp.Items, err
 }
 
-func sendMessagewx(name, text string) (int, error) {
+func sendMessagewx(title string, content string, key string) (int, error)  {
         apiUrl :=sendMessageUrlwx
-        body := `{"title":"*OCI操作消息*"+name,"text":text}`
-        response, err := http.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(body))
+        data := url.Values{}
+	data.Add("template", "json")
+	if wx_web=1 {
+	data.Add("key", wx_token)
+	}
+	if wx_web=2 {
+	data.Add("token", wx_token)
+	}
+	data.Add("title", title)
+	data.Add("content", "*OCI操作消息* "+content+"\n")
 
+	response, err := http.Post(urlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	
         if err != nil {
            panic(err)
         }
