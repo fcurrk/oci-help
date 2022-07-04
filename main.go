@@ -71,7 +71,7 @@ var (
 	instanceBaseSection *ini.Section
 	instance            Instance
 	proxy               string
-	wx_web              string
+	wx_web              int32
 	wx_token            string
 	token               string
 	chat_id             string
