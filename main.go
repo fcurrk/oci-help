@@ -2349,12 +2349,17 @@ func listBootVolumeAttachments(availabilityDomain, compartmentId, bootVolumeId *
 
 func sendMessagewx(name, text string) (msg Message, err error) {
         apiUrl :=sendMessageUrlwx
-    body := `{"title":"*OCI操作消息*"+name,"text":text}`
-    resp,_ := http.Post(apiUrl,"application/json",strings.NewReader(body))
-    b, _ := ioutil.ReadAll(resp.Body)
-    fmt.Println(string(b))
-    defer resp.Body.Close()
-    return
+        body := `{"title":"*OCI操作消息*"+name,"text":text}`
+        response, err := http.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(body))
+
+        if err != nil {
+	   fmt.Println(err)
+	   return
+        }
+        defer response.Body.Close()
+        // 返回请求状态码或者错误信息
+        result := response.StatusCode
+        return result, err
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
