@@ -1156,7 +1156,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	color.Unset()
 	if EACH {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
-		_, err := sendMessage("", text)
+		_, err := sendMessage("任务开始", text)
 		if wx_web != "" && wx_token != "" {
 	        res, _ := sendMessagewx("任务开始", text)
 			if res != 200 {
@@ -1213,7 +1213,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				color.Set(color.FgGreen)
 				text = fmt.Sprintf("第 %d 个实例抢到了, 正在启动中请稍等...\n区域: %s\n实例名称: %s\n公共IP: 获取中...\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 				color.Unset()				
-				msg, msgErr = sendMessage("", text)
+				msg, msgErr = sendMessage("任务提醒", text)
 		                if wx_web != "" && wx_token != "" {
 	                        sendMessagewx("任务提醒", text)
                                 }
@@ -1281,7 +1281,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				color.Unset()
 				if EACH {
 					text := fmt.Sprintf("第 %d 个实例创建失败了\n错误信息: %s\n区域: %s\n可用性域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时:%s", pos+1, errInfo, oracle.Region, *adName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
-					sendMessage("", text)
+					sendMessage("任务提醒", text)
 					if wx_web != "" && wx_token != "" {
 	                                   sendMessagewx("任务提醒", text)
                                         }
@@ -1369,7 +1369,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 
                 if runTimes == retry {
 			text := fmt.Sprintf("尝试创建第 %d 个实例任务完成...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n执行次数: %d\n成功个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum , runTimes , num)
-			sendMessage("", text)
+			sendMessage("任务提醒", text)
 			if wx_web != "" && wx_token != "" {
 	                   sendMessagewx("任务提醒", text)
                          }
@@ -1386,7 +1386,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 
 		if pos < sum && EACH {
 			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
-			sendMessage("", text)
+			sendMessage("任务提醒", text)
 			if wx_web != "" && wx_token != "" {
 	                   sendMessagewx("任务提醒", text)
                          }
