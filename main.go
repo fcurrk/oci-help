@@ -1156,7 +1156,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	color.Unset()
 	if EACH {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
-		_, err := sendMessage("任务开始", text)
+		_, err := sendMessage("", text)
 		if wx_web != "" && wx_token != "" {
 	        res, _ := sendMessagewx("任务开始", text)
 			if res != 200 {
@@ -2362,14 +2362,14 @@ func sendMessagewx(title string, content string) (int, error)  {
         if wx_web == "pushplus" {
             data.Add("token", wx_token)
         }
-        data.Add("title", title)
-        data.Add("content", "*OCI操作消息* "+content+"\n")
+        data.Add("title", "OCI操作消息\n" + title)
+        data.Add("content", content)
 
         response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 	if err != nil {
             panic(err)
         }
-        fmt.Printf("%s\n", strings.NewReader(data.Encode()))
+        //fmt.Printf("%s\n", strings.NewReader(data.Encode()))
         defer response.Body.Close()
         // 返回请求状态码或者错误信息
         result := response.StatusCode
