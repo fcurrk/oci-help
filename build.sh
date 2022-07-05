@@ -5,7 +5,7 @@ BUILD() {
   cd oci-help
   appName="oci-help"
   rm -rf .git/
-  xgo -targets=linux/amd64,windows/amd64,linux/arm64 -out "$appName" -ldflags="-X main.Version=3.5.0" -tags=jsoniter .
+  xgo -targets=linux/amd64,windows/amd64,linux/arm64 -out "$appName" -ldflags="-X main.Version=3.5.1" -tags=jsoniter .
   mkdir -p "build"
   mv oci-help* build
 
