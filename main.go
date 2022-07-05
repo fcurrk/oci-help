@@ -2362,7 +2362,7 @@ func sendMessagewx(title string, content string) (int, error)  {
         data := url.Values{}
         data.Add("template", "json")
         if wx_web == "server" && wx_openid !="" {
-	    data.Add("openid", wxopenid)
+	    data.Add("openid", wx_openid)
 	}
         if wx_web == "pushplus" {
             data.Add("token", wx_token)
