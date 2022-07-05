@@ -1156,9 +1156,9 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	color.Unset()
 	if EACH {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
-		_, err := sendMessage("", text)
+		_, err := sendMessage("任务开始", text)
 		if wx_web != "" {
-	        res, _ := sendMessagewx("", text)
+	        res, _ := sendMessagewx("任务开始", text)
 			if res != 200 {
 			   fmt.Println("WX消息提醒发送失败...")
 		        }
@@ -1215,7 +1215,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				color.Unset()				
 				msg, msgErr = sendMessage("", text)
 		                if wx_web != "" {
-	                        sendMessagewx("", text)
+	                        sendMessagewx("任务提醒", text)
                                 }
 
 			}
@@ -1236,9 +1236,9 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			}
 			if EACH {
 				if msgErr != nil {
-					sendMessage("", text)
+					sendMessage("任务提醒", text)
 					if wx_web != "" {
-	                                   sendMessagewx("", text)
+	                                   sendMessagewx("任务提醒", text)
                                         }
 				} else {
 					editMessage(msg.MessageId, "", text)
@@ -1283,7 +1283,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 					text := fmt.Sprintf("第 %d 个实例创建失败了\n错误信息: %s\n区域: %s\n可用性域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时:%s", pos+1, errInfo, oracle.Region, *adName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 					sendMessage("", text)
 					if wx_web != "" {
-	                                   sendMessagewx("", text)
+	                                   sendMessagewx("任务提醒", text)
                                         }
 				}
 
@@ -1371,7 +1371,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			text := fmt.Sprintf("尝试创建第 %d 个实例任务完成...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n执行次数: %d\n成功个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum , runTimes , num)
 			sendMessage("", text)
 			if wx_web != "" {
-	                   sendMessagewx("", text)
+	                   sendMessagewx("任务提醒", text)
                          }
 		}
 		// 成功或者失败次数达到重试次数，重置失败次数为0
@@ -1388,7 +1388,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 			sendMessage("", text)
 			if wx_web != "" {
-	                   sendMessagewx("", text)
+	                   sendMessagewx("任务提醒", text)
                          }
 		}
 	}
@@ -2356,8 +2356,7 @@ func sendMessagewx(title string, content string) (int, error)  {
 	default:
 		sendMessageUrlwx = ""
 	}
-	fmt.Println("/s",sendMessageUrlwx)
-
+	if sendMessageUrlwx != "" {
              data := url.Values{}
              data.Add("template", "json")
              if wx_web == "pushplus" {
@@ -2373,8 +2372,12 @@ func sendMessagewx(title string, content string) (int, error)  {
              }
 	     fmt.Printf("%s\n", strings.NewReader(data.Encode()))
              defer response.Body.Close()
-             // 返回请求状态码或者错误信息
-             result := response.StatusCode
+	     result := response.StatusCode
+	     } else {
+             result := "未设置正确的消息推送模式"
+	     err := "error"
+             }
+	     // 返回请求状态码或者错误信息
              return result, err
      
 }
