@@ -926,7 +926,7 @@ func batchLaunchInstances(oracleSec *ini.Section) {
 	printf("[%s] 开始创建\n", oracleSectionName)
 	color.Unset()
 	var SUM, NUM int32 = 0, 0
-	if wx_web != "" {
+	if wx_web != "" && wx_token != "" {
 	sendMessagewx(fmt.Sprintf("[%s]", oracleSectionName), "开始创建")
         }
 	sendMessage(fmt.Sprintf("[%s]", oracleSectionName), "开始创建")
@@ -949,7 +949,7 @@ func batchLaunchInstances(oracleSec *ini.Section) {
 	printf("[%s] 结束创建。创建实例总数: %d, 成功 %d , 失败 %d\n", oracleSectionName, SUM, NUM, SUM-NUM)
 	color.Unset()
 	text := fmt.Sprintf("结束创建。创建实例总数: %d, 成功 %d , 失败 %d", SUM, NUM, SUM-NUM)
-	if wx_web != "" {
+	if wx_web != "" && wx_token != "" {
 	   sendMessagewx(fmt.Sprintf("[%s]", oracleSectionName), text)
         }
 	sendMessage(fmt.Sprintf("[%s]", oracleSectionName), text)
@@ -1157,7 +1157,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 	if EACH {
 		text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 		_, err := sendMessage("任务开始", text)
-		if wx_web != "" {
+		if wx_web != "" && wx_token != "" {
 	        res, _ := sendMessagewx("任务开始", text)
 			if res != 200 {
 			   fmt.Println("WX消息提醒发送失败...")
@@ -1214,7 +1214,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				text = fmt.Sprintf("第 %d 个实例抢到了, 正在启动中请稍等...\n区域: %s\n实例名称: %s\n公共IP: 获取中...\n可用性域:%s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时: %s", pos+1, oracle.Region, *createResp.Instance.DisplayName, *createResp.Instance.AvailabilityDomain, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 				color.Unset()				
 				msg, msgErr = sendMessage("", text)
-		                if wx_web != "" {
+		                if wx_web != "" && wx_token != "" {
 	                        sendMessagewx("任务提醒", text)
                                 }
 
@@ -1237,12 +1237,12 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 			if EACH {
 				if msgErr != nil {
 					sendMessage("任务提醒", text)
-					if wx_web != "" {
+					if wx_web != "" && wx_token != "" {
 	                                   sendMessagewx("任务提醒", text)
                                         }
 				} else {
 					editMessage(msg.MessageId, "", text)
-					if wx_web != "" {
+					if wx_web != "" && wx_token != "" {
 	                                   sendMessagewx(strconv.Itoa(msg.MessageId), text)
                                          }
 				}
@@ -1282,7 +1282,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				if EACH {
 					text := fmt.Sprintf("第 %d 个实例创建失败了\n错误信息: %s\n区域: %s\n可用性域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n尝试次数: %d\n耗时:%s", pos+1, errInfo, oracle.Region, *adName, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum, runTimes, duration)
 					sendMessage("", text)
-					if wx_web != "" {
+					if wx_web != "" && wx_token != "" {
 	                                   sendMessagewx("任务提醒", text)
                                         }
 				}
@@ -1370,7 +1370,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
                 if runTimes == retry {
 			text := fmt.Sprintf("尝试创建第 %d 个实例任务完成...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d\n执行次数: %d\n成功个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum , runTimes , num)
 			sendMessage("", text)
-			if wx_web != "" {
+			if wx_web != "" && wx_token != "" {
 	                   sendMessagewx("任务提醒", text)
                          }
 		}
@@ -1387,7 +1387,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		if pos < sum && EACH {
 			text := fmt.Sprintf("正在尝试创建第 %d 个实例...\n区域: %s\n实例配置: %s\nOCPU计数: %g\n内存(GB): %g\n引导卷(GB): %g\n创建个数: %d", pos+1, oracle.Region, *shape.Shape, *shape.Ocpus, *shape.MemoryInGBs, bootVolumeSize, sum)
 			sendMessage("", text)
-			if wx_web != "" {
+			if wx_web != "" && wx_token != "" {
 	                   sendMessagewx("任务提醒", text)
                          }
 		}
@@ -2354,27 +2354,26 @@ func sendMessagewx(title string, content string) (int, error)  {
 	case "pushplus":
 		sendMessageUrlwx = "http://www.pushplus.plus/send"
 	default:
-		sendMessageUrlwx = ""
+		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
 	}
-             data := url.Values{}
-             data.Add("template", "json")
-             if wx_web == "pushplus" {
-                 data.Add("token", wx_token)
-             }
-	     data.Add("title", title)
-	     data.Add("content", "*OCI操作消息* "+content+"\n")
 
-	     response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
-	
-             if err != nil {
-                panic(err)
-             }
-	     fmt.Printf("%s\n", strings.NewReader(data.Encode()))
-             defer response.Body.Close()
-	     result := response.StatusCod
-	     // 返回请求状态码或者错误信息
-             return result, err
-     
+        data := url.Values{}
+        data.Add("template", "json")
+        if wx_web == "pushplus" {
+            data.Add("token", wx_token)
+        }
+        data.Add("title", title)
+        data.Add("content", "*OCI操作消息* "+content+"\n")
+
+        response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+	if err != nil {
+            panic(err)
+        }
+        fmt.Printf("%s\n", strings.NewReader(data.Encode()))
+        defer response.Body.Close()
+        // 返回请求状态码或者错误信息
+        result := response.StatusCode
+        return result, err 
 }
 
 func sendMessage(name, text string) (msg Message, err error) {
