@@ -50,6 +50,7 @@ retry为实例失败后重试次数，设置为-1为一直重试直到成功。
 
 wx_web=server
 wx_token=12345677
+wx_openid=user01,user02
 
 **wx_web可选设置server或pushplus**
 
@@ -62,6 +63,10 @@ pushplus使用server酱推送：
 pushplus注册申请地址：[http://www.pushplus.plus](http://www.pushplus.plus)
 
 **wx_token为相应key或token**，在相应注册页面获取.
+
+wx_openid为server酱推送指定信息接收人，多人用,分隔，仅支持测试号和企业微信应用消息通道，为空则默认
+
+server酱里指定的所有用户都能接收到.
 
 ## 运行程序
 ```bash
