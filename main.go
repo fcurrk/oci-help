@@ -73,6 +73,7 @@ var (
 	proxy               string
 	wx_web              string
 	wx_token            string
+	wx_openid           string
 	token               string
 	chat_id             string
 	sendMessageUrl      string
@@ -109,6 +110,7 @@ type Instance struct {
 	Retry                  int32   `ini:"retry"`
 	CloudInit              string  `ini:"cloud-init"`
 	PASSWORD               string  `ini:"password"`
+	wxopenid               string  `ini:"wx_openid"`
 	MinTime                int32   `ini:"minTime"`
 	MaxTime                int32   `ini:"maxTime"`
 }
@@ -2359,6 +2361,9 @@ func sendMessagewx(title string, content string) (int, error)  {
         //fmt.Printf(sendMessageUrlwx)
         data := url.Values{}
         data.Add("template", "json")
+        if wx_web == "server" && wxopenid !="" {
+	    data.Add("openid", wxopenid)
+	}
         if wx_web == "pushplus" {
             data.Add("token", wx_token)
         }
