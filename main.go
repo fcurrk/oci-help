@@ -1243,7 +1243,7 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 				} else {
 					editMessage(msg.MessageId, "", text)
 					if wx_web != "" && wx_token != "" {
-	                                   sendMessagewx(strconv.Itoa(msg.MessageId), text)
+	                                   sendMessagewx("任务提醒", text)
                                          }
 				}
 			}
