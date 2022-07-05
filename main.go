@@ -2372,13 +2372,10 @@ func sendMessagewx(title string, content string) (int, error)  {
              }
 	     fmt.Printf("%s\n", strings.NewReader(data.Encode()))
              defer response.Body.Close()
-	     result := response.StatusCode
-	     } else {
-             result := "未设置正确的消息推送模式"
-	     err := "error"
-             }
+	     result := response.StatusCod
 	     // 返回请求状态码或者错误信息
              return result, err
+	 }
      
 }
 
