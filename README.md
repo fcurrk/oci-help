@@ -44,8 +44,24 @@ retry为实例失败后重试次数，设置为-1为一直重试直到成功。
 /getid 获得自己的数字id
 
 ## WX 消息提醒配置
-配置文件设置好自己的微信推送消息POST服务地址即可，没有请保留为空。
-POST提交的信息需包含title,text两个数据。
+微信推送支持server酱及pushplus，以下两项任一项为空则不启用微信推送.
+
+**例如：**
+
+wx_web=server
+wx_token=12345677
+
+**wx_web可选设置server或pushplus**
+
+server使用server酱推送：
+
+server酱注册申请地址：[https://sct.ftqq.com](https://sct.ftqq.com)
+
+pushplus使用server酱推送：
+
+pushplus注册申请地址：[http://www.pushplus.plus](http://www.pushplus.plus)
+
+**wx_token为相应key或token**，在相应注册页面获取.
 
 ## 运行程序
 ```bash
