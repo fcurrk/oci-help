@@ -110,7 +110,6 @@ type Instance struct {
 	Retry                  int32   `ini:"retry"`
 	CloudInit              string  `ini:"cloud-init"`
 	PASSWORD               string  `ini:"password"`
-	wxopenid               string  `ini:"wx_openid"`
 	MinTime                int32   `ini:"minTime"`
 	MaxTime                int32   `ini:"maxTime"`
 }
@@ -136,6 +135,7 @@ func main() {
 	proxy = defSec.Key("proxy").Value()
 	wx_web = defSec.Key("wx_web").Value()
 	wx_token = defSec.Key("wx_token").Value()
+	wx_openid = defSec.Key("wx_openid").Value()
 	token = defSec.Key("token").Value()
 	chat_id = defSec.Key("chat_id").Value()
 	if defSec.HasKey("EACH") {
@@ -2361,7 +2361,7 @@ func sendMessagewx(title string, content string) (int, error)  {
         //fmt.Printf(sendMessageUrlwx)
         data := url.Values{}
         data.Add("template", "json")
-        if wx_web == "server" && wxopenid !="" {
+        if wx_web == "server" && wx_openid !="" {
 	    data.Add("openid", wxopenid)
 	}
         if wx_web == "pushplus" {
