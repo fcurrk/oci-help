@@ -2356,7 +2356,6 @@ func sendMessagewx(title string, content string) (int, error)  {
 	default:
 		sendMessageUrlwx = ""
 	}
-	if sendMessageUrlwx != "" {
              data := url.Values{}
              data.Add("template", "json")
              if wx_web == "pushplus" {
@@ -2375,7 +2374,6 @@ func sendMessagewx(title string, content string) (int, error)  {
 	     result := response.StatusCod
 	     // 返回请求状态码或者错误信息
              return result, err
-	 }
      
 }
 
