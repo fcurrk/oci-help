@@ -2356,21 +2356,20 @@ func sendMessagewx(title string, content string) (int, error)  {
 	default:
 		sendMessageUrlwx = "https://sctapi.ftqq.com/" + wx_token + ".send"
 	}
-        fmt.Printf(sendMessageUrlwx)
+        //fmt.Printf(sendMessageUrlwx)
         data := url.Values{}
         data.Add("template", "json")
         if wx_web == "pushplus" {
             data.Add("token", wx_token)
-            fmt.Printf(wx_token)
         }
-        data.Add("title", "OCI操作消息\n" + title)
-        data.Add("content", content)
+        data.Add("title", "OCI操作消息")
+        data.Add("content", title + "\n" + content)
 
         response, err := http.Post(sendMessageUrlwx, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 	if err != nil {
             panic(err)
         }
-        fmt.Printf("%s\n", strings.NewReader(data.Encode()))
+        //fmt.Printf("%s\n", strings.NewReader(data.Encode()))
         defer response.Body.Close()
         // 返回请求状态码或者错误信息
         result := response.StatusCode
