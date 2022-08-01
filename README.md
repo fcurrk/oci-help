@@ -13,19 +13,19 @@
 
 
 ## 获取配置信息
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/1.png)
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/2.png)
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/3.png)
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/4.png)
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/5.png)
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/6.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/1.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/2.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/3.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/4.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/5.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/6.png)
 
 
 ## 编辑配置文件
 用文本编辑器打开在第一步获取到的 `oci-help.ini` 文件，进行如下配置:
 
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/7.png)
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/8.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/7.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/8.png)
 
 availabilityDomain可用域名称可为空，怕麻烦的可以不填.
 
@@ -33,7 +33,7 @@ retry为实例失败后重试次数，设置为-1为一直重试直到成功。
 
 
 ## Telegram 消息提醒配置
-![image](https://github.com/fcurrk/oci-help/raw/main/doc/9.png)
+![image](https://github.com/fcurrk/oci-help/blob/main/doc/9.png)
 
 > BotFather: https://t.me/BotFather
 
