@@ -539,9 +539,9 @@ func instanceDetails(instanceId *string) {
 		fmt.Printf("网络带宽(Gbps): %g\n", *instance.ShapeConfig.NetworkingBandwidthInGbps)
 		fmt.Printf("内存(GB): %g\n\n", *instance.ShapeConfig.MemoryInGBs)
 		fmt.Printf("Oracle Cloud Agent 插件配置情况\n")
-		fmt.Printf("监控插件已禁用？: %t\n", *instance.AgentConfig.IsMonitoringDisabled)
-		fmt.Printf("管理插件已禁用？: %t\n", *instance.AgentConfig.IsManagementDisabled)
-		fmt.Printf("所有插件均已禁用？: %t\n", *instance.AgentConfig.AreAllPluginsDisabled)
+		fmt.Printf("监控插件已禁用: %t\n", *instance.AgentConfig.IsMonitoringDisabled)
+		fmt.Printf("管理插件已禁用: %t\n", *instance.AgentConfig.IsManagementDisabled)
+		fmt.Printf("所有插件均已禁用: %t\n", *instance.AgentConfig.AreAllPluginsDisabled)
 		for _, value := range instance.AgentConfig.PluginsConfig {
 			fmt.Printf("%s: %s\n", *value.Name, value.DesiredState)
 		}
@@ -684,20 +684,20 @@ func instanceDetails(instanceId *string) {
 				disable := false
 				_, err := updateInstance(instance.Id, nil, nil, nil, instance.AgentConfig.PluginsConfig, &disable)
 				if err != nil {
-					fmt.Printf("\033[1;31m启用管理和监控插件失败.\033[0m %s\n", err.Error())
+					fmt.Printf("启用管理和监控插件失败. %s\n", err.Error())
 				} else {
-					fmt.Printf("\033[1;32m启用管理和监控插件成功.\033[0m\n")
+					fmt.Printf("启用管理和监控插件成功.\n")
 				}
 			} else if input == "2" {
 				disable := true
 				_, err := updateInstance(instance.Id, nil, nil, nil, instance.AgentConfig.PluginsConfig, &disable)
 				if err != nil {
-					fmt.Printf("\033[1;31m禁用管理和监控插件失败.\033[0m %s\n", err.Error())
+					fmt.Printf("禁用管理和监控插件失败. %s\n", err.Error())
 				} else {
-					fmt.Printf("\033[1;32m禁用管理和监控插件成功.\033[0m\n")
+					fmt.Printf("禁用管理和监控插件成功.\n")
 				}
 			} else {
-				fmt.Printf("\033[1;31m输入错误.\033[0m\n")
+				fmt.Printf("输入错误.\n")
 			}
 			time.Sleep(1 * time.Second)
 
