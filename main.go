@@ -548,7 +548,7 @@ func instanceDetails(instanceId *string) {
 		fmt.Println("--------------------")
                 color.Set(color.FgGreen)
 		fmt.Printf("\n1: %s   2: %s   3: %s   4: %s   5: %s   0: %s\n", "启动", "停止", "重启", "终止", "更换公共IP", "返回")
-		fmt.Printf("\033[1;32m6: %s   7: %s   8: %s\033[0m\n", "升级/降级", "修改名称", "Oracle Cloud Agent 插件配置")
+		fmt.Printf("6: %s   7: %s   8: %s\n", "升级/降级", "修改名称", "Oracle Cloud Agent 插件配置")
 		color.Unset()
 		var input string
 		var num int
@@ -657,9 +657,9 @@ func instanceDetails(instanceId *string) {
 			fmt.Println("正在升级/降级实例...")
 			_, err := updateInstance(instance.Id, nil, &ocpus, &memoryInGBs, nil, nil)
 			if err != nil {
-				fmt.Printf("\033[1;31m升级/降级实例失败.\033[0m %s\n", err.Error())
+				fmt.Printf("升级/降级实例失败. %s\n", err.Error())
 			} else {
-				fmt.Printf("\033[1;32m升级/降级实例成功.\033[0m\n")
+				fmt.Printf("升级/降级实例成功.\n")
 			}
 			time.Sleep(3 * time.Second)
 
@@ -670,9 +670,9 @@ func instanceDetails(instanceId *string) {
 			fmt.Println("正在修改实例名称...")
 			_, err := updateInstance(instance.Id, &input, nil, nil, nil, nil)
 			if err != nil {
-				fmt.Printf("\033[1;31m修改实例名称失败.\033[0m %s\n", err.Error())
+				fmt.Printf("修改实例名称失败. %s\n", err.Error())
 			} else {
-				fmt.Printf("\033[1;32m修改实例名称成功.\033[0m\n")
+				fmt.Printf("修改实例名称成功.\n")
 			}
 			time.Sleep(3 * time.Second)
 
