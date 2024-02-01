@@ -38,6 +38,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
@@ -63,7 +64,7 @@ var (
 	networkClient       core.VirtualNetworkClient
 	storageClient       core.BlockstorageClient
 	identityClient      identity.IdentityClient
-	ctx                 context.Context
+	ctx                 context.Context = context.Background()
 	oracleSections      []*ini.Section
 	oracleSection       *ini.Section
 	oracleSectionName   string
@@ -76,6 +77,7 @@ var (
 	wx_openid           string
 	token               string
 	chat_id             string
+	cmd                 string
 	sendMessageUrl      string
 	sendMessageUrlwx    string
 	editMessageUrl      string
@@ -104,6 +106,7 @@ type Instance struct {
 	InstanceDisplayName    string  `ini:"instanceDisplayName"`
 	Ocpus                  float32 `ini:"cpus"`
 	MemoryInGBs            float32 `ini:"memoryInGBs"`
+	Burstable              string  `ini:"burstable"`
 	BootVolumeSizeInGBs    int64   `ini:"bootVolumeSizeInGBs"`
 	Sum                    int32   `ini:"sum"`
 	Each                   int32   `ini:"each"`
@@ -138,6 +141,7 @@ func main() {
 	wx_openid = defSec.Key("wx_openid").Value()
 	token = defSec.Key("token").Value()
 	chat_id = defSec.Key("chat_id").Value()
+	cmd = defSec.Key("cmd").Value()
 	if defSec.HasKey("EACH") {
 		EACH, _ = defSec.Key("EACH").Bool()
 	} else {
@@ -296,7 +300,8 @@ func showMainMenu() {
 		showMainMenu()
 		return
 	} else if strings.EqualFold(input, "ip") {
-		batchListInstancesIp(oracleSection)
+		IPsFilePath := IPsFilePrefix + "-" + time.Now().Format("2006-01-02-150405.txt")
+		batchListInstancesIp(IPsFilePath, oracleSection)
 		showMainMenu()
 		return
 	}
@@ -317,7 +322,20 @@ func showMainMenu() {
 
 func listInstances() {
 	fmt.Println("正在获取实例数据...")
-	instances, err := ListInstances(ctx, computeClient)
+	var instances []core.Instance
+	var ins []core.Instance
+	var nextPage *string
+	var err error
+	for {
+		ins, nextPage, err = ListInstances(ctx, computeClient, nextPage)
+		if err == nil {
+			instances = append(instances, ins...)
+		}
+		if nextPage == nil || len(ins) == 0 {
+			break
+		}
+	}
+
 	if err != nil {
 		printlnErr("获取失败, 回车返回上一级菜单.", err.Error())
 		fmt.Scanln()
@@ -519,10 +537,18 @@ func instanceDetails(instanceId *string) {
 		fmt.Printf("配置: %s\n", *instance.Shape)
 		fmt.Printf("OCPU计数: %g\n", *instance.ShapeConfig.Ocpus)
 		fmt.Printf("网络带宽(Gbps): %g\n", *instance.ShapeConfig.NetworkingBandwidthInGbps)
-		fmt.Printf("内存(GB): %g\n", *instance.ShapeConfig.MemoryInGBs)
+		fmt.Printf("内存(GB): %g\n\n", *instance.ShapeConfig.MemoryInGBs)
+		fmt.Printf("Oracle Cloud Agent 插件配置情况\n")
+		fmt.Printf("监控插件已禁用？: %t\n", *instance.AgentConfig.IsMonitoringDisabled)
+		fmt.Printf("管理插件已禁用？: %t\n", *instance.AgentConfig.IsManagementDisabled)
+		fmt.Printf("所有插件均已禁用？: %t\n", *instance.AgentConfig.AreAllPluginsDisabled)
+		for _, value := range instance.AgentConfig.PluginsConfig {
+			fmt.Printf("%s: %s\n", *value.Name, value.DesiredState)
+		}
 		fmt.Println("--------------------")
                 color.Set(color.FgGreen)
 		fmt.Printf("\n1: %s   2: %s   3: %s   4: %s   5: %s   0: %s\n", "启动", "停止", "重启", "终止", "更换公共IP", "返回")
+		fmt.Printf("\033[1;32m6: %s   7: %s   8: %s\033[0m\n", "升级/降级", "修改名称", "Oracle Cloud Agent 插件配置")
 		color.Unset()
 		var input string
 		var num int
@@ -615,6 +641,40 @@ func instanceDetails(instanceId *string) {
 				}
 				time.Sleep(3 * time.Second)
 			}
+		case 6:
+			fmt.Printf("升级/降级实例, 请输入CPU个数: ")
+			var input string
+			var ocpus float32
+			var memoryInGBs float32
+			fmt.Scanln(&input)
+			value, _ := strconv.ParseFloat(input, 32)
+			ocpus = float32(value)
+			input = ""
+			fmt.Printf("升级/降级实例, 请输入内存大小: ")
+			fmt.Scanln(&input)
+			value, _ = strconv.ParseFloat(input, 32)
+			memoryInGBs = float32(value)
+			fmt.Println("正在升级/降级实例...")
+			_, err := updateInstance(instance.Id, nil, &ocpus, &memoryInGBs, nil, nil)
+			if err != nil {
+				fmt.Printf("\033[1;31m升级/降级实例失败.\033[0m %s\n", err.Error())
+			} else {
+				fmt.Printf("\033[1;32m升级/降级实例成功.\033[0m\n")
+			}
+			time.Sleep(3 * time.Second)
+
+		case 7:
+			fmt.Printf("请为实例输入一个新的名称: ")
+			var input string
+			fmt.Scanln(&input)
+			fmt.Println("正在修改实例名称...")
+			_, err := updateInstance(instance.Id, &input, nil, nil, nil, nil)
+			if err != nil {
+				fmt.Printf("\033[1;31m修改实例名称失败.\033[0m %s\n", err.Error())
+			} else {
+				fmt.Printf("\033[1;32m修改实例名称成功.\033[0m\n")
+			}
+			time.Sleep(3 * time.Second)
 
 		default:
 			listInstances()
@@ -901,6 +961,7 @@ func listLaunchInstanceTemplates() {
 }
 
 func multiBatchLaunchInstances() {
+	IPsFilePath := IPsFilePrefix + "-" + time.Now().Format("2006-01-02-150405.txt")
 	for _, sec := range oracleSections {
 		var err error
 		err = initVar(sec)
@@ -914,6 +975,9 @@ func multiBatchLaunchInstances() {
 			continue
 		}
 		batchLaunchInstances(sec)
+		batchListInstancesIp(IPsFilePath, sec)
+		command(cmd)
+		sleepRandomSecond(5, 5)
 	}
 }
 
@@ -975,19 +1039,31 @@ func multiBatchListInstancesIp() {
 	fmt.Printf("导出实例公共IP地址完成，请查看文件 %s\n", IPsFilePath)
 }
 
-func batchListInstancesIp(sec *ini.Section) {
-	IPsFilePath := IPsFilePrefix + "-" + time.Now().Format("2006-01-02-150405.txt")
-	_, err := os.Stat(IPsFilePath)
+func batchListInstancesIp(filePath string, sec *ini.Section) {
+	_, err := os.Stat(filePath)
 	if err != nil && os.IsNotExist(err) {
-		os.Create(IPsFilePath)
+		os.Create(filePath)
 	}
 	fmt.Printf("正在导出实例公共IP地址...\n")
-	ListInstancesIPs(IPsFilePath, sec.Name())
-	fmt.Printf("导出实例IP地址完成，请查看文件 %s\n", IPsFilePath)
+	ListInstancesIPs(filePath, sec.Name())
+	fmt.Printf("导出实例IP地址完成，请查看文件 %s\n", filePath)
 }
 
 func ListInstancesIPs(filePath string, sectionName string) {
-	vnicAttachments, err := ListVnicAttachments(ctx, computeClient, nil)
+	var vnicAttachments []core.VnicAttachment
+	var vas []core.VnicAttachment
+	var nextPage *string
+	var err error
+	for {
+		vas, nextPage, err = ListVnicAttachments(ctx, computeClient, nil, nextPage)
+		if err == nil {
+			vnicAttachments = append(vnicAttachments, vas...)
+		}
+		if nextPage == nil || len(vas) == 0 {
+			break
+		}
+	}
+
 	if err != nil {
 		fmt.Printf("ListVnicAttachments Error: %s\n", err.Error())
 		return
@@ -1091,6 +1167,11 @@ func LaunchInstances(ads []identity.AvailabilityDomain) (sum, num int32) {
 		request.ShapeConfig = &core.LaunchInstanceShapeConfigDetails{
 			Ocpus:       shape.Ocpus,
 			MemoryInGBs: shape.MemoryInGBs,
+		}
+		if instance.Burstable == "1/8" {
+			request.ShapeConfig.BaselineOcpuUtilization = core.LaunchInstanceShapeConfigDetailsBaselineOcpuUtilization8
+		} else if instance.Burstable == "1/2" {
+			request.ShapeConfig.BaselineOcpuUtilization = core.LaunchInstanceShapeConfigDetailsBaselineOcpuUtilization2
 		}
 	}
 
@@ -1574,7 +1655,7 @@ func CreateOrGetNetworkInfrastructure(ctx context.Context, c core.VirtualNetwork
 	subnet, err = createOrGetSubnetWithDetails(
 		ctx, c, vcn.Id,
 		common.String(instance.SubnetDisplayName),
-		common.String("10.0.0.0/24"),
+		common.String("10.0.0.0/20"),
 		common.String("subnetdns"),
 		common.String(instance.AvailabilityDomain))
 	return
@@ -1609,7 +1690,7 @@ func createOrGetSubnetWithDetails(ctx context.Context, c core.VirtualNetworkClie
 	}
 
 	// create a new subnet
-	printf("开始创建Subnet（没有可用的Subnet，或指定的Subnet不存在）\n")
+	fmt.Printf("开始创建Subnet（没有可用的Subnet，或指定的Subnet不存在）\n")
 	// 子网名称为空，以当前时间为名称创建子网
 	if *displayName == "" {
 		displayName = common.String(time.Now().Format("subnet-20060102-1504"))
@@ -1685,7 +1766,7 @@ func createOrGetSubnetWithDetails(ctx context.Context, c core.VirtualNetworkClie
 	if err != nil {
 		return
 	}
-	printf("Subnet创建成功: %s\n", *r.Subnet.DisplayName)
+	fmt.Printf("Subnet创建成功: %s\n", *r.Subnet.DisplayName)
 	subnet = r.Subnet
 	return
 }
@@ -1726,7 +1807,7 @@ func createOrGetVcn(ctx context.Context, c core.VirtualNetworkClient) (core.Vcn,
 		}
 	}
 	// create a new VCN
-	printf("开始创建VCN（没有可用的VCN，或指定的VCN不存在）\n")
+	fmt.Println("开始创建VCN（没有可用的VCN，或指定的VCN不存在）\n")
 	if *displayName == "" {
 		displayName = common.String(time.Now().Format("vcn-20060102-1504"))
 	}
@@ -1740,7 +1821,7 @@ func createOrGetVcn(ctx context.Context, c core.VirtualNetworkClient) (core.Vcn,
 	if err != nil {
 		return vcn, err
 	}
-	printf("VCN创建成功: %s\n", *r.Vcn.DisplayName)
+	fmt.Printf("VCN创建成功: %s\n", *r.Vcn.DisplayName)
 	vcn = r.Vcn
 	return vcn, err
 }
@@ -1770,7 +1851,7 @@ func createOrGetInternetGateway(c core.VirtualNetworkClient, vcnID *string) (cor
 
 	listGWRespone, err := c.ListInternetGateways(ctx, listGWRequest)
 	if err != nil {
-		printf("Internet gateway list error: %s\n", err.Error())
+		fmt.Printf("Internet gateway list error: %s\n", err.Error())
 		return gateway, err
 	}
 
@@ -1779,7 +1860,7 @@ func createOrGetInternetGateway(c core.VirtualNetworkClient, vcnID *string) (cor
 		gateway = listGWRespone.Items[0]
 	} else {
 		//Create new Gateway
-		printf("开始创建Internet网关\n")
+		fmt.Printf("开始创建Internet网关\n")
 		enabled := true
 		createGWDetails := core.CreateInternetGatewayDetails{
 			CompartmentId: &oracle.Tenancy,
@@ -1794,11 +1875,11 @@ func createOrGetInternetGateway(c core.VirtualNetworkClient, vcnID *string) (cor
 		createGWResponse, err := c.CreateInternetGateway(ctx, createGWRequest)
 
 		if err != nil {
-			printf("Internet gateway create error: %s\n", err.Error())
+			fmt.Printf("Internet gateway create error: %s\n", err.Error())
 			return gateway, err
 		}
 		gateway = createGWResponse.InternetGateway
-		printf("Internet网关创建成功: %s\n", *gateway.DisplayName)
+		fmt.Printf("Internet网关创建成功: %s\n", *gateway.DisplayName)
 	}
 	return gateway, err
 }
@@ -1814,7 +1895,7 @@ func createOrGetRouteTable(c core.VirtualNetworkClient, gatewayID, VcnID *string
 	var listRTResponse core.ListRouteTablesResponse
 	listRTResponse, err = c.ListRouteTables(ctx, listRTRequest)
 	if err != nil {
-		printf("Route table list error: %s\n", err.Error())
+		fmt.Printf("Route table list error: %s\n", err.Error())
 		return
 	}
 
@@ -1831,7 +1912,7 @@ func createOrGetRouteTable(c core.VirtualNetworkClient, gatewayID, VcnID *string
 			routeTable = listRTResponse.Items[0]
 			//Default Route table needs route rule adding
 		} else {
-			printf("路由表未添加规则，开始添加Internet路由规则\n")
+			fmt.Printf("路由表未添加规则，开始添加Internet路由规则\n")
 			updateRTDetails := core.UpdateRouteTableDetails{
 				RouteRules: []core.RouteRule{rr},
 			}
@@ -1844,16 +1925,16 @@ func createOrGetRouteTable(c core.VirtualNetworkClient, gatewayID, VcnID *string
 			var updateRTResponse core.UpdateRouteTableResponse
 			updateRTResponse, err = c.UpdateRouteTable(ctx, updateRTRequest)
 			if err != nil {
-				printf("Error updating route table: %s\n", err)
+				fmt.Printf("Error updating route table: %s\n", err)
 				return
 			}
-			printf("Internet路由规则添加成功\n")
+			fmt.Printf("Internet路由规则添加成功\n")
 			routeTable = updateRTResponse.RouteTable
 		}
 
 	} else {
 		//No default route table found
-		printf("Error could not find VCN default route table, VCN OCID: %s Could not find route table.\n", *VcnID)
+		fmt.Printf("Error could not find VCN default route table, VCN OCID: %s Could not find route table.\n", *VcnID)
 	}
 	return
 }
@@ -1929,24 +2010,49 @@ func ListAvailabilityDomains() ([]identity.AvailabilityDomain, error) {
 	return resp.Items, err
 }
 
-func ListInstances(ctx context.Context, c core.ComputeClient) ([]core.Instance, error) {
+func getUsers() {
+	req := identity.ListUsersRequest{
+		CompartmentId:   &oracle.Tenancy,
+		RequestMetadata: getCustomRequestMetadataWithRetryPolicy(),
+	}
+	resp, _ := identityClient.ListUsers(ctx, req)
+	for _, user := range resp.Items {
+		var userName string
+		if user.Name != nil {
+			userName = *user.Name
+		}
+		var email string
+		if user.Email != nil {
+			email = *user.Email
+		}
+		fmt.Println("用户名:", userName, "邮箱:", email)
+	}
+
+}
+
+func ListInstances(ctx context.Context, c core.ComputeClient, page *string) ([]core.Instance, *string, error) {
 	req := core.ListInstancesRequest{
 		CompartmentId:   common.String(oracle.Tenancy),
 		RequestMetadata: getCustomRequestMetadataWithRetryPolicy(),
+		Limit:           common.Int(100),
+		Page:            page,
 	}
 	resp, err := c.ListInstances(ctx, req)
-	return resp.Items, err
+	return resp.Items, resp.OpcNextPage, err
 }
 
-func ListVnicAttachments(ctx context.Context, c core.ComputeClient, instanceId *string) ([]core.VnicAttachment, error) {
+func ListVnicAttachments(ctx context.Context, c core.ComputeClient, instanceId *string, page *string) ([]core.VnicAttachment, *string, error) {
 	req := core.ListVnicAttachmentsRequest{
 		CompartmentId:   common.String(oracle.Tenancy),
-		RequestMetadata: getCustomRequestMetadataWithRetryPolicy()}
+		RequestMetadata: getCustomRequestMetadataWithRetryPolicy(),
+		Limit:           common.Int(100),
+		Page:            page,
+	}
 	if instanceId != nil && *instanceId != "" {
 		req.InstanceId = instanceId
 	}
 	resp, err := c.ListVnicAttachments(ctx, req)
-	return resp.Items, err
+	return resp.Items, resp.OpcNextPage, err
 }
 
 func GetVnic(ctx context.Context, c core.VirtualNetworkClient, vnicID *string) (core.Vnic, error) {
@@ -2086,6 +2192,47 @@ func getInstance(instanceId *string) (core.Instance, error) {
 	return resp.Instance, err
 }
 
+func updateInstance(instanceId *string, displayName *string, ocpus, memoryInGBs *float32,
+	details []core.InstanceAgentPluginConfigDetails, disable *bool) (core.UpdateInstanceResponse, error) {
+	updateInstanceDetails := core.UpdateInstanceDetails{}
+	if displayName != nil && *displayName != "" {
+		updateInstanceDetails.DisplayName = displayName
+	}
+	shapeConfig := core.UpdateInstanceShapeConfigDetails{}
+	if ocpus != nil && *ocpus > 0 {
+		shapeConfig.Ocpus = ocpus
+	}
+	if memoryInGBs != nil && *memoryInGBs > 0 {
+		shapeConfig.MemoryInGBs = memoryInGBs
+	}
+	updateInstanceDetails.ShapeConfig = &shapeConfig
+
+	// Oracle Cloud Agent 配置
+	if disable != nil && details != nil {
+		for i := 0; i < len(details); i++ {
+			if *disable {
+				details[i].DesiredState = core.InstanceAgentPluginConfigDetailsDesiredStateDisabled
+			} else {
+				details[i].DesiredState = core.InstanceAgentPluginConfigDetailsDesiredStateEnabled
+			}
+		}
+		agentConfig := core.UpdateInstanceAgentConfigDetails{
+			IsMonitoringDisabled:  disable, // 是否禁用监控插件
+			IsManagementDisabled:  disable, // 是否禁用管理插件
+			AreAllPluginsDisabled: disable, // 是否禁用所有可用的插件（管理和监控插件）
+			PluginsConfig:         details,
+		}
+		updateInstanceDetails.AgentConfig = &agentConfig
+	}
+
+	req := core.UpdateInstanceRequest{
+		InstanceId:            instanceId,
+		UpdateInstanceDetails: updateInstanceDetails,
+		RequestMetadata:       getCustomRequestMetadataWithRetryPolicy(),
+	}
+	return computeClient.UpdateInstance(ctx, req)
+}
+
 func instanceAction(instanceId *string, action core.InstanceActionActionEnum) (ins core.Instance, err error) {
 	req := core.InstanceActionRequest{
 		InstanceId:      instanceId,
@@ -2135,14 +2282,14 @@ func changePublicIp(vnics []core.Vnic) (publicIp core.PublicIp, err error) {
 }
 
 func getInstanceVnics(instanceId *string) (vnics []core.Vnic, err error) {
-	vnicAttachments, err := ListVnicAttachments(ctx, computeClient, instanceId)
+	vnicAttachments, _, err := ListVnicAttachments(ctx, computeClient, instanceId, nil)
 	if err != nil {
 		return
 	}
 	for _, vnicAttachment := range vnicAttachments {
 		vnic, vnicErr := GetVnic(ctx, networkClient, vnicAttachment.VnicId)
 		if vnicErr != nil {
-			printf("GetVnic error: %s\n", vnicErr.Error())
+			fmt.Printf("GetVnic error: %s\n", vnicErr.Error())
 			continue
 		}
 		vnics = append(vnics, vnic)
@@ -2578,4 +2725,19 @@ func getCustomRetryPolicy() *common.RetryPolicy {
 		common.WithMaximumNumberAttempts(attempts),
 		common.WithShouldRetryOperation(retryOnAllNon200ResponseCodes))
 	return &policy
+}
+
+func command(cmd string) {
+	res := strings.Fields(cmd)
+	if len(res) > 0 {
+		fmt.Println("执行命令:", strings.Join(res, " "))
+		name := res[0]
+		arg := res[1:]
+		out, err := exec.Command(name, arg...).CombinedOutput()
+		if err == nil {
+			fmt.Println(string(out))
+		} else {
+			fmt.Println(err)
+		}
+	}
 }
