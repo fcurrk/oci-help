@@ -12,12 +12,12 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: oci-help
 
@@ -33,7 +33,7 @@ jobs:
           bash build.sh build
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: artifact
           path: oci-help/build
