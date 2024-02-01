@@ -676,6 +676,31 @@ func instanceDetails(instanceId *string) {
 			}
 			time.Sleep(3 * time.Second)
 
+		case 8:
+			fmt.Printf("Oracle Cloud Agent 插件配置, 请输入 (1: 启用管理和监控插件; 2: 禁用管理和监控插件): ")
+			var input string
+			fmt.Scanln(&input)
+			if input == "1" {
+				disable := false
+				_, err := updateInstance(instance.Id, nil, nil, nil, instance.AgentConfig.PluginsConfig, &disable)
+				if err != nil {
+					fmt.Printf("\033[1;31m启用管理和监控插件失败.\033[0m %s\n", err.Error())
+				} else {
+					fmt.Printf("\033[1;32m启用管理和监控插件成功.\033[0m\n")
+				}
+			} else if input == "2" {
+				disable := true
+				_, err := updateInstance(instance.Id, nil, nil, nil, instance.AgentConfig.PluginsConfig, &disable)
+				if err != nil {
+					fmt.Printf("\033[1;31m禁用管理和监控插件失败.\033[0m %s\n", err.Error())
+				} else {
+					fmt.Printf("\033[1;32m禁用管理和监控插件成功.\033[0m\n")
+				}
+			} else {
+				fmt.Printf("\033[1;31m输入错误.\033[0m\n")
+			}
+			time.Sleep(1 * time.Second)
+
 		default:
 			listInstances()
 			return
