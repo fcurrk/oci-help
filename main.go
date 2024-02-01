@@ -2400,7 +2400,7 @@ func getInstancePublicIps(instanceId *string) (ips []string, err error) {
 		}
 
 		var vnicAttachments []core.VnicAttachment
-		vnicAttachments, err = ListVnicAttachments(ctx, computeClient, instanceId)
+		vnicAttachments, _, err = ListVnicAttachments(ctx, computeClient, instanceId, nil)
 //		fmt.Println(vnicAttachments, err)
 		if err != nil {
 			continue
